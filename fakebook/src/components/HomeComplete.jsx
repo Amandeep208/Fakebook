@@ -6,7 +6,7 @@ function HomeComplete() {
 
 return (
   <>
-  <div className="w-full flex">
+  <div className="px-10 pt-5 w-full flex">
     <div className="w-2/5">
       <ChatList />
     </div>

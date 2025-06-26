@@ -1,6 +1,7 @@
 import { useChat } from "../context/ChatContext";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config.js"
+import logo from "../assets/fakebook-logo.png"; 
 
 
 const TopBar = () => {
@@ -23,16 +24,20 @@ const TopBar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center p-4 bg-purple-600 text-white">
-      <h1 className="text-xl font-bold">
+    <div className=" rounded-b-xl p-5 flex justify-between items-center  p-4 bg-[#f3e8ff] ">
+      {/* <h1 className="text-xl text-black-600 font-bold">
         {loggedInUser ? `Welcome, ${loggedInUser.name}` : "Loading..."}
-      </h1>
+      </h1> */}
+      <div className="logo">
+        <img className="w-40 " src={logo} alt="" />
+      </div>
       <button
         onClick={handleLogout}
-        className="bg-white text-purple-600 px-3 py-1 rounded font-semibold"
+        className="bg-purple-600 text-white px-3 py-1 rounded font-semibold hover:bg-purple-700"
       >
         Logout
       </button>
+
     </div>
   );
 };
