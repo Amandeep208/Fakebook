@@ -9,6 +9,7 @@ const path = require("path");
 const bcrypt = require('bcrypt');
 
 
+
 const app = express();
 const port = 3000;
 
@@ -50,6 +51,11 @@ function isAuthenticated(req, res, next) {
     res.redirect("/");
   }
 }
+
+app.get("/users", isAuthenticated, async (req, res) => {
+  const allUsers = await users.find({ username: { $ne: req.session.user.username } });
+  res.json({ success: true, users: allUsers });
+});
 
 // Routes
 // app.get("/", (req, res) => res.render("index"));
@@ -105,6 +111,22 @@ app.get("/auth/check", (req, res) => {
     res.json({ loggedIn: false });
   }
 });
+
+
+app.get("/messages/:to", isAuthenticated, async (req, res) => {
+  const from = req.session.user.username;
+  const to = req.params.to;
+
+  const messages = await Message.find({
+    $or: [
+      { sender: from, receiver: to },
+      { sender: to, receiver: from }
+    ]
+  }).sort({ timestamp: 1 });
+
+  res.json(messages);
+});
+
 
 // Get messages between two users
 // app.get("/messages/:to", isAuthenticated, async (req, res) => {

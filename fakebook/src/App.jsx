@@ -1,19 +1,78 @@
 import React from 'react';
-import BackgroundLayout from './components/BackgroundLayout';
-import LoginForm from './components/LoginForm';
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Login from './Pages/Login';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signup from './Pages/Signup';
-import HomePage from './Pages/HomePage';
+import HomeComplete from './components/HomeComplete';
+import ChatList from './components/ChatList';
+import ChatBox from './components/ChatBox';
+import Profile from './components/Profile';
+import TopBar from './components/TopBar';
+import BottomBar from './components/BottomBar';
+import useIsMobile from './hooks/uselsMobile';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
+
+const AppContent = () => {
+  const location = useLocation();
+  const isMobile = useIsMobile();
+
+  const hideTopBarRoutes = ['/login', '/signup'];
+  const shouldHideTopBar = hideTopBarRoutes.includes(location.pathname);
+
+  return (
+    <>
+      {!shouldHideTopBar && <TopBar />}
+
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="/signup" element={
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+        } />
+
+        {/* Protected Routes */}
+        {isMobile ? (
+          <>
+            <Route path="/" element={
+              <ProtectedRoute>
+                <ChatList />
+              </ProtectedRoute>
+            } />
+            <Route path="/chat" element={
+              <ProtectedRoute>
+                <ChatBox />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+          </>
+        ) : (
+          <Route path="/" element={
+            <ProtectedRoute>
+              <HomeComplete />
+            </ProtectedRoute>
+          } />
+        )}
+      </Routes>
+
+      {!shouldHideTopBar && isMobile && <BottomBar />}
+    </>
+  );
+};
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup/>} />
-      </Routes>
+      <AppContent />
     </BrowserRouter>
   );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link for routing
 import logo from '../assets/fakebook-logo.png';
 import { useState } from 'react';
+import { BACKEND_URL } from "../config.js"
 
 
 
@@ -17,7 +18,7 @@ const SignupForm = () => {
   })
 
   async function handelSubmit(){
-      const response = await fetch("http://192.168.1.64:3000/signup", {
+      const response = await fetch(`${BACKEND_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomeComplete from '../components/HomeComplete.jsx';
+import ChatBox from '../components/ChatBox';
+import ChatList from '../components/ChatList';
+import useIsMobile from '../hooks/uselsMobile';
+import BottomBar from '../components/BottomBar.jsx';
+import TopBar from '../components/TopBar.jsx';
+import Profile from '../components/Profile.jsx';
+import { BACKEND_URL } from "../config.js"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -7,7 +16,7 @@ export default function HomePage() {
 
   useEffect(() => {
     async function checkSession() {
-      const res = await fetch("http://192.168.1.64:3000/auth/check", {
+      const res = await fetch(`${BACKEND_URL}/auth/check`, {
         credentials: "include"
       });
       const data = await res.json();
@@ -23,7 +32,7 @@ export default function HomePage() {
   }, [navigate]);
 
   async function handleLogout() {
-    const res = await fetch("http://192.168.1.64:3000/logout", {
+    const res = await fetch(`${BACKEND_URL}/logout`, {
       method: "GET",
       credentials: "include"
     });
@@ -49,5 +58,6 @@ export default function HomePage() {
         Logout
       </button>
     </div>
+    
   );
 }

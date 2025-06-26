@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/fakebook-logo.png';
+import { BACKEND_URL } from "../config.js"
+
 
 const LoginForm = () => {
   const navigate = useNavigate(); // ✅ Must be called here, inside the component
@@ -11,7 +13,7 @@ const LoginForm = () => {
   });
 
   async function handleSubmit() {
-    const response = await fetch("http://192.168.1.64:3000/login", {
+    const response = await fetch(`${BACKEND_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
