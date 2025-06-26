@@ -3,6 +3,7 @@ import { useChat } from "../context/ChatContext";
 import { useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/uselsMobile";
 import { BACKEND_URL } from "../config.js";
+import TopBar from "./TopBar.jsx";
 
 function ChatList() {
   const [users, setUsers] = useState([]);
@@ -31,11 +32,12 @@ function ChatList() {
 
   return (
     <>
-      <div className="px-4 py-2 text-xl text-black-600 font-bold">
+    <TopBar/>
+      <div className="px-4 py-2 mt-5 text-xl text-black-600 font-bold">
   {loggedInUser ? `Welcome, ${loggedInUser.name}` : "Loading user..."}
 </div>
 
-      <div className="h-[75vh] w-full pt-3 pb-10 overflow-y-auto">
+      <div className="h-[70vh] w-full pt-3 pb-10 overflow-y-auto">
         {users.map((user) => (
           <div
             key={user.username}

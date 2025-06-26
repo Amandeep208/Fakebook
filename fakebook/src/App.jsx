@@ -21,7 +21,7 @@ const AppContent = () => {
 
   return (
     <>
-      {!shouldHideTopBar && <TopBar />}
+      {/* {!shouldHideTopBar && <TopBar />} */}
 
       <Routes>
         {/* Public Routes */}

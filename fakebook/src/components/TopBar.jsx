@@ -24,7 +24,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className=" rounded-b-xl p-5 flex justify-between items-center  p-4 bg-[#f3e8ff] ">
+    <div className=" rounded-xl p-5 m-2 flex justify-between items-center  p-4 bg-[#f3e8ff] ">
       {/* <h1 className="text-xl text-black-600 font-bold">
         {loggedInUser ? `Welcome, ${loggedInUser.name}` : "Loading..."}
       </h1> */}
