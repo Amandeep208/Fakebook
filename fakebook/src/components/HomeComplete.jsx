@@ -7,10 +7,10 @@ function HomeComplete() {
 return (
   <>
   <div className="w-full flex">
-    <div className="w-1/2">
+    <div className="w-2/5">
       <ChatList />
     </div>
-    <div className="w-1/2">
+    <div className="w-3/5">
       <ChatBox />
     </div>
   </div>

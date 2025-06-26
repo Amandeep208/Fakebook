@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useChat } from "../context/ChatContext";
 import { useNavigate } from "react-router-dom";
 import useIsMobile from "../hooks/uselsMobile";
-import { BACKEND_URL } from "../config.js"
-
+import { BACKEND_URL } from "../config.js";
 
 function ChatList() {
   const [users, setUsers] = useState([]);
@@ -32,18 +31,31 @@ function ChatList() {
 
   return (
     <div className="h-[75vh] w-full pt-3 pb-10 overflow-y-auto">
-      {users.map((user) => (
-        <div
-          key={user.username}
-          onClick={() => handleSelect(user)}
-          className={`cursor-pointer p-4 border-b hover:bg-gray-100 ${
-            selectedUser?.username === user.username ? "bg-purple-100 font-semibold" : ""
-          }`}
-        >
-          <p>{user.name} ({user.username})</p>
-        </div>
-      ))}
+  {users.map((user) => (
+    <div
+      key={user.username}
+      onClick={() => handleSelect(user)}
+      className={`flex items-center gap-4 my-2 rounded-xl px-5 py-3 mx-2 cursor-pointer 
+        ${
+          selectedUser?.username === user.username
+            ? "bg-purple-200 text-purple-900 ring-2 ring-purple-400 font-semibold"
+            : "bg-gray-100 hover:bg-gray-200"
+        }`}
+    >
+      {/* Profile Circle (initial of name) */}
+      <div className="w-10 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
+        {user.name?.[0]?.toUpperCase() || "?"}
+      </div>
+
+      {/* Name and username */}
+      <div>
+        <p className="text-md">{user.name}</p>
+        <p className="text-sm text-gray-600">@{user.username}</p>
+      </div>
     </div>
+  ))}
+</div>
+
   );
 }
 
