@@ -59,10 +59,14 @@ function ChatBox() {
   if (!selectedUser) {
     return (
       <>
-      {isMobile && <TopBar/>}
-      <div className="flex items-center justify-center h-full text-gray-500">
-        Select a user to start chatting
-      </div>
+        {isMobile && <TopBar />}
+        <div className="h-[75vh]">
+
+        <div className="flex items-center justify-center h-full text-gray-500">
+          Select a user to start chatting
+        </div>
+        </div>
+
       </>
     );
   }
@@ -70,12 +74,12 @@ function ChatBox() {
   if (isMobile) {
     height = "70vh";
   }
-  
+
 
   return (
     <>
-    {isMobile && <TopBar/>}
-    <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2`}>
+      {isMobile && <TopBar />}
+      <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2`}>
         {/* Chat Header */}
         <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold">
           {selectedUser.name} ({selectedUser.username})
@@ -90,8 +94,8 @@ function ChatBox() {
             >
               <div
                 className={`px-4 py-2 rounded-lg max-w-[70%] ${msg.sender === selectedUser.username
-                    ? "bg-gray-200 text-left"
-                    : "bg-purple-100 text-right font-bold"
+                  ? "bg-gray-200 text-left"
+                  : "bg-purple-100 text-right font-bold"
                   }`}
               >
                 {msg.content}
