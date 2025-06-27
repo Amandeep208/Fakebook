@@ -7,14 +7,14 @@ const users = require("./model/user");
 const Message = require("./model/message"); // New message model
 const path = require("path");
 const bcrypt = require('bcrypt');
-
+const {dbLink} = require("./config"); // Importing database links
 
 
 const app = express();
 const port = 3000;
 
 // MongoDB connection
-mongoose.connect("mongodb://localhost:27017/rStar", {
+mongoose.connect(`${dbLink}rStar`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log("MongoDB connected"))
@@ -37,7 +37,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: "mongodb://localhost:27017/rStar",
+    mongoUrl: `${dbLink}rStar`,
     collectionName: "sessions",
   }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
