@@ -12,6 +12,34 @@ function ChatList() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:3000/auth/check", {
+          credentials: "include", // important for session cookie
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setLoggedInUser(data.user); // assuming your backend sends { user: { name: ... } }
+        } else {
+          setLoggedInUser(null);
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+        setLoggedInUser(null);
+      }
+    }
+
+    fetchUser();
+  }, []);
+
+
+
+
+
+
+
+
+  useEffect(() => {
     async function fetchUsers() {
       const res = await fetch(`${BACKEND_URL}/users`, {
         credentials: "include",
@@ -32,10 +60,10 @@ function ChatList() {
 
   return (
     <>
-    <TopBar/>
-      <div className="px-4 py-2 mt-5 text-xl text-black-600 font-bold">
-  {loggedInUser ? `Welcome, ${loggedInUser.name}` : "Loading user..."}
-</div>
+      <TopBar />
+      <div className="px-4 py-2 mt-5 text-xl text-black font-bold">
+        {loggedInUser ? `Welcome, ${loggedInUser.name}` : "Loading user..."}
+      </div>
 
       <div className="h-[70vh] w-full pt-3 pb-10 overflow-y-auto">
         {users.map((user) => (

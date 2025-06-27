@@ -60,7 +60,7 @@ function ChatBox() {
     return (
       <>
         {isMobile && <TopBar />}
-        <div className="h-[75vh]">
+        <div className="h-[80vh]">
 
         <div className="flex items-center justify-center h-full text-gray-500">
           Select a user to start chatting

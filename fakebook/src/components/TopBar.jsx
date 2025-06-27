@@ -16,7 +16,7 @@ const TopBar = () => {
 
     const data = await res.json();
     if (data.success) {
-      alert("Logged out successfully");
+      // alert("Logged out successfully");
       navigate("/login");
     } else {
       alert("Logout failed");
@@ -33,7 +33,7 @@ const TopBar = () => {
       </div>
       <button
         onClick={handleLogout}
-        className="bg-purple-600 text-white px-3 py-1 rounded font-semibold hover:bg-purple-700"
+        className="bg-purple-600 text-white px-5 py-2 rounded-3xl  font-semibold hover:bg-purple-700"
       >
         Logout
       </button>

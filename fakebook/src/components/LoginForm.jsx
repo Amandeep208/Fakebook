@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/fakebook-logo.png';
 import { BACKEND_URL } from "../config.js"
+import { useChat } from '../context/ChatContext.jsx';
+
 
 
 const LoginForm = () => {
+  const { setLoggedInUser } = useChat(); 
   const navigate = useNavigate(); // ✅ Must be called here, inside the component
 
   const [formData, setFormData] = useState({
@@ -25,6 +28,7 @@ const LoginForm = () => {
     const result = await response.json();
 
     if (result.success) {
+      setLoggedInUser(result.user); // Set the logged-in user in context
       navigate("/"); // ✅ Correct usage
     } else {
       alert(`Login failed: ${result.message}`);

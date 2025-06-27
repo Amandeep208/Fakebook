@@ -30,6 +30,7 @@ const SignupForm = () => {
     const result = await response.json();
 
     if (result.success) {
+      
       alert("Signup successful!");
       navigator("/login")
     } else {
