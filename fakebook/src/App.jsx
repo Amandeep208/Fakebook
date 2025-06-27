@@ -56,11 +56,23 @@ const AppContent = () => {
             } />
           </>
         ) : (
+          <>
           <Route path="/" element={
             <ProtectedRoute>
               <HomeComplete />
             </ProtectedRoute>
           } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+                <HomeComplete />
+              </ProtectedRoute>
+            } />
+            <Route path="/chat" element={
+              <ProtectedRoute>
+                <HomeComplete />
+              </ProtectedRoute>
+            } />
+            </>
         )}
       </Routes>
 

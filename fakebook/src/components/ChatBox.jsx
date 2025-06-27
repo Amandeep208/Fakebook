@@ -1,10 +1,8 @@
 import { useChat } from "../context/ChatContext";
 import { useEffect, useRef, useState } from "react";
-import { BACKEND_URL } from "../config.js"
+import { BACKEND_URL } from "../config.js";
 import TopBar from "./TopBar.jsx";
-import useIsMobile from '../hooks/uselsMobile.js';
-
-
+import useIsMobile from "../hooks/uselsMobile.js";
 
 function ChatBox() {
   const isMobile = useIsMobile();
@@ -61,20 +59,15 @@ function ChatBox() {
       <>
         {isMobile && <TopBar />}
         <div className="h-[80vh]">
-
-        <div className="flex items-center justify-center h-full text-gray-500">
-          Select a user to start chatting
+          <div className="flex items-center justify-center h-full text-gray-500">
+            Select a user to start chatting
+          </div>
         </div>
-        </div>
-
       </>
     );
   }
-  var height = "90vh";
-  if (isMobile) {
-    height = "70vh";
-  }
 
+  const height = isMobile ? "70vh" : "90vh";
 
   return (
     <>
@@ -93,10 +86,11 @@ function ChatBox() {
               className={`mb-2 flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"}`}
             >
               <div
-                className={`px-4 py-2 rounded-lg max-w-[70%] ${msg.sender === selectedUser.username
-                  ? "bg-gray-200 text-left"
-                  : "bg-purple-100 text-right font-bold"
-                  }`}
+                className={`px-4 py-2 rounded-lg max-w-[70%] ${
+                  msg.sender === selectedUser.username
+                    ? "bg-gray-200 text-left"
+                    : "bg-purple-100 text-right font-bold"
+                }`}
               >
                 {msg.content}
               </div>
@@ -111,6 +105,11 @@ function ChatBox() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
             placeholder="Type a message..."
             className="flex-1 px-4 py-2 rounded-full border border-gray-300 outline-none focus:ring-2 focus:ring-[#9085c6]"
           />

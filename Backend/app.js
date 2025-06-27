@@ -7,7 +7,7 @@ const users = require("./model/user");
 const Message = require("./model/message"); // New message model
 const path = require("path");
 const bcrypt = require('bcrypt');
-const {dbLink} = require("./config"); // Importing database links
+const {dbLink,secretKey} = require("./config"); // Importing database links
 
 
 const app = express();
@@ -33,7 +33,7 @@ app.use(express.json());
 
 // Session
 app.use(session({
-  secret: "yourSecretKey12345",
+  secret: secretKey,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
