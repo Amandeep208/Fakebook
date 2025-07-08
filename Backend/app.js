@@ -3,36 +3,27 @@ const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
-// const users = require("./model/user");
-// const Message = require("./model/message"); 
-// const path = require("path");
-// const bcrypt = require('bcrypt');
-const {dbLink, secretKey, frontendURL} = require("./config"); // Importing database links
 
+const {dbLink, secretKey, frontendURL} = require("./config"); 
 
 const app = express()
-// app.use(cors());
 
 app.use(cors({
-  origin: frontendURL, // Your frontend address
-  credentials: true                  // Allow cookies (sessions)
+  origin: frontendURL, 
+  credentials: true                 
 }));
 
 mongoose.connect(`${dbLink}rStar`, {
-  // useNewUrlParser: true,
-  // useUnifiedTopology: true,
+
 }).then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB error:", err));
-
-
 
 app.use(express.json());
 
 
-//creating sessions moddleware
 app.use(session({
-  secret: secretKey, //encrypted key for session
-  resave: false, // dont save the session if nothing is modified
+  secret: secretKey, 
+  resave: false, 
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: `${dbLink}rStar`,
@@ -47,21 +38,9 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messageRoutes")
 
-
-
-app.use("/auth", authRoutes); // Using auth routes
+app.use("/auth", authRoutes); 
 app.use("/users", userRoutes)
 app.use("/messages", messageRoutes)
-
-
-
-// app.get("/",(req,res)=> {
-//     res.send("Hello World")
-// })
-
-
-
-
 
 
 app.listen(8081, '0.0.0.0')

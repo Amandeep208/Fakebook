@@ -12,7 +12,7 @@ exports.signup = async(req, res) => {
     return res.status(400).json({ success: false, message: "Passwords don't match" });
 
   try {
-    const saltRounds = 10; // you can increase for more security
+    const saltRounds = 10; 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     console.log(hashedPassword);
     const newUser = new users({ name:name, username:username, password:hashedPassword });
@@ -34,7 +34,6 @@ exports.login = async (req, res) => {
     const user = await users.findOne({ username });
     if (!user) return res.json({ success: false, message: "Username not found" });
     var hashedPass = await bcrypt.compare(password, user.password)
-    // console.log(user.password)
     if (!hashedPass)
       return res.json({ success: false, message: "Invalid password" });
 

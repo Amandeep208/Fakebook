@@ -1,4 +1,3 @@
-// Authentication Middleware
 exports.isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     next();

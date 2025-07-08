@@ -2,8 +2,8 @@ const express = require('express');
 const { isAuthenticated } = require("../middleware/authMiddleware");
 const { users } = require('../controllers/userController');
 
-const router = express.Router(); // ✅ correctly initialized
+const router = express.Router(); 
 
-router.get('/fetchusers', isAuthenticated,users); // ✅ fixed 'router'
+router.get('/fetchusers', isAuthenticated,users); 
 
 module.exports = router;
