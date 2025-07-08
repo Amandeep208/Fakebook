@@ -6,7 +6,7 @@ import HomeComplete from './components/HomeComplete';
 import ChatList from './components/ChatList';
 import ChatBox from './components/ChatBox';
 import Profile from './components/Profile';
-import TopBar from './components/TopBar';
+// import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import useIsMobile from './hooks/uselsMobile';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -24,7 +24,6 @@ const AppContent = () => {
       {/* {!shouldHideTopBar && <TopBar />} */}
 
       <Routes>
-        {/* Public Routes */}
         <Route path="/login" element={
           <PublicRoute>
             <Login />
@@ -36,7 +35,6 @@ const AppContent = () => {
           </PublicRoute>
         } />
 
-        {/* Protected Routes */}
         {isMobile ? (
           <>
             <Route path="/" element={
@@ -57,13 +55,13 @@ const AppContent = () => {
           </>
         ) : (
           <>
-          <Route path="/" element={
-            <ProtectedRoute>
-              <HomeComplete />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
+            <Route path="/" element={
+              <ProtectedRoute>
+                <HomeComplete />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
                 <HomeComplete />
               </ProtectedRoute>
             } />
@@ -72,7 +70,7 @@ const AppContent = () => {
                 <HomeComplete />
               </ProtectedRoute>
             } />
-            </>
+          </>
         )}
       </Routes>
 

@@ -32,7 +32,7 @@ export default function HomePage() {
   }, [navigate]);
 
   async function handleLogout() {
-    const res = await fetch(`${BACKEND_URL}/logout`, {
+    const res = await fetch(`${BACKEND_URL}/auth/logout`, {
       method: "GET",
       credentials: "include"
     });

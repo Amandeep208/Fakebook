@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "backend2.0",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
@@ -15,6 +15,9 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
-    "mongoose": "^8.16.0"
+    "express-sessions": "^1.0.6",
+    "mongod": "^2.0.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.2"
   }
 }

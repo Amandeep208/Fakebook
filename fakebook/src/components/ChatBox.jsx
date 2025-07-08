@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { BACKEND_URL } from "../config.js";
 import TopBar from "./TopBar.jsx";
 import useIsMobile from "../hooks/uselsMobile.js";
+import { redirect } from "react-router-dom";
 
 function ChatBox() {
   const isMobile = useIsMobile();
@@ -30,7 +31,6 @@ function ChatBox() {
     return () => clearInterval(interval);
   }, [selectedUser]);
 
-  // Auto-scroll to bottom on new message
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -39,7 +39,7 @@ function ChatBox() {
   const sendMessage = async () => {
     if (!input.trim() || !selectedUser) return;
 
-    const res = await fetch(`${BACKEND_URL}/messages`, {
+    const res = await fetch(`${BACKEND_URL}/messages/send`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -52,6 +52,7 @@ function ChatBox() {
       setMessages((prev) => [...prev, result.message]); // Instantly show message
       setInput("");
     }
+   
   };
 
   if (!selectedUser) {

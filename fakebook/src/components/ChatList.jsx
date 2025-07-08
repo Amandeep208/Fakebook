@@ -14,7 +14,7 @@ function ChatList() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch("http://localhost:3000/auth/check", {
+        const res = await fetch(`${BACKEND_URL}/auth/check`, {
           credentials: "include", // important for session cookie
         });
         const data = await res.json();
@@ -41,7 +41,7 @@ function ChatList() {
 
   useEffect(() => {
     async function fetchUsers() {
-      const res = await fetch(`${BACKEND_URL}/users`, {
+      const res = await fetch(`${BACKEND_URL}/users/fetchusers`, {
         credentials: "include",
       });
       const data = await res.json();

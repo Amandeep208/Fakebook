@@ -8,7 +8,7 @@ import { useChat } from '../context/ChatContext.jsx';
 
 const LoginForm = () => {
   const { setLoggedInUser } = useChat(); 
-  const navigate = useNavigate(); // ✅ Must be called here, inside the component
+  const navigate = useNavigate(); // Must be called here, inside the component
 
   const [formData, setFormData] = useState({
     username: "",
@@ -16,7 +16,7 @@ const LoginForm = () => {
   });
 
   async function handleSubmit() {
-    const response = await fetch(`${BACKEND_URL}/login`, {
+    const response = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -29,7 +29,7 @@ const LoginForm = () => {
 
     if (result.success) {
       setLoggedInUser(result.user); // Set the logged-in user in context
-      navigate("/"); // ✅ Correct usage
+      navigate("/"); // Correct usage
     } else {
       alert(`Login failed: ${result.message}`);
     }

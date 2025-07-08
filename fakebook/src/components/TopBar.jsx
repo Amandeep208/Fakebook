@@ -9,7 +9,7 @@ const TopBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    const res = await fetch(`${BACKEND_URL}/logout`, {
+    const res = await fetch(`${BACKEND_URL}/auth/logout`, {
       method: "GET",
       credentials: "include"
     });

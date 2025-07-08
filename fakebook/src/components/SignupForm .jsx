@@ -18,7 +18,7 @@ const SignupForm = () => {
   })
 
   async function handelSubmit(){
-      const response = await fetch(`${BACKEND_URL}/signup`, {
+      const response = await fetch(`${BACKEND_URL}/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
