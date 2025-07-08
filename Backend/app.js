@@ -7,14 +7,14 @@ const mongoose = require("mongoose");
 // const Message = require("./model/message"); 
 // const path = require("path");
 // const bcrypt = require('bcrypt');
-const {dbLink,secretKey} = require("./config"); // Importing database links
+const {dbLink, secretKey, frontendURL} = require("./config"); // Importing database links
 
 
 const app = express()
 // app.use(cors());
 
 app.use(cors({
-  origin: "http://192.168.1.64:5173", // Your frontend address
+  origin: frontendURL, // Your frontend address
   credentials: true                  // Allow cookies (sessions)
 }));
 
