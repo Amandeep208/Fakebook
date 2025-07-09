@@ -1,9 +1,7 @@
-const dbLink1 = "mongodb://localhost:27017/"; // MongoDB connection string
-const dbLink2 = "mongodb+srv://rajatkr2:sAchkhand%4016@cluster0.fsknipp.mongodb.net/"; // Example for MongoDB Atlas
-const secretKey = "yourSecretKey12345";
-const dbLink = dbLink1; // Use dbLink1 for local MongoDB or dbLink2 for MongoDB Atlas
-const frontendURL = "http://192.168.1.64:5173";
+require('dotenv').config();
+
+const secretKey = process.env.SECRET_KEY;
+const dbLink = process.env.DB_LINK1; // Use dbLink1 for local MongoDB or dbLink2 for MongoDB Atlas
+const frontendURL = process.env.FRONTEND_URL;
 
 module.exports = {dbLink, secretKey, frontendURL};
-// export const URL1 = `${dbLink1}`;
-// export const URL2 = `${dbLink2}`;
