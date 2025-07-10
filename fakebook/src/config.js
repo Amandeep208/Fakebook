@@ -1,5 +1,4 @@
-// Change only this value when your IP changes
-const IP_ADDRESS = "192.168.1.64";
-const PORT = "8081"; // Port for the frontend
+const IP_ADDRESS = import.meta.env.VITE_BACKEND_IP_ADDRESS;
+const PORT = import.meta.env.VITE_BACKEND_PORT;
 
 export const BACKEND_URL = `http://${IP_ADDRESS}:${PORT}`;
