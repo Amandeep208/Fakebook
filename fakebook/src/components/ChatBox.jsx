@@ -10,6 +10,8 @@ function ChatBox() {
   const isMobile = useIsMobile();
   const { selectedUser } = useChat();
   const [messages, setMessages] = useState([]);
+  const [editingID, seteditingID] = useState(false)
+  const [updatedmsg, setUpdatedmsg] = useState("")
   const [input, setInput] = useState("");
   const scrollRef = useRef();
 
@@ -69,6 +71,12 @@ function ChatBox() {
   }
 
   const height = isMobile ? "70vh" : "90vh";
+  function handleEditClick(id, oldContent) {
+    setUpdatedmsg(oldContent)
+    seteditingID(id)
+    // const newMessage = prompt()
+    console.log(id, oldContent)
+  }
 
   return (
     <>
@@ -88,9 +96,9 @@ function ChatBox() {
                 }`}
             >
               <div
-                className={`group relative flex flex-row justify-between px-4 py-2 rounded-lg min-w-[10rem] max-w-[70%] ${msg.sender === selectedUser.username
-                    ? "bg-gray-200 text-left"
-                    : "bg-purple-200 text-left "
+                className={`group relative flex flex-row justify-between px-4 py-2 rounded-lg min-h-[3rem] min-w-[10rem] max-w-[70%] ${msg.sender === selectedUser.username
+                  ? "bg-gray-200 text-left"
+                  : "bg-purple-200 text-left "
                   }`}
               >
                 <div>
@@ -103,12 +111,32 @@ function ChatBox() {
                   {(new Date(msg.createdAt)).getMinutes().toString().padStart(2, "0")}
                 </div>
 
+
+
+
+
+
+
+
+
+
                 {/* Edit button - appears on hover */}
                 {msg.sender === selectedUser.username ? null : (
-                  <button className="hidden group-hover:block absolute top-1 right-1">
+                  <button
+                    key={messages._id}
+                    onClick={() => handleEditClick(msg._id, msg.content)} className="hidden group-hover:block absolute top-1 right-1">
                     <img src={edit} alt="edit" className="w-4" />
                   </button>
                 )}
+
+
+
+
+
+
+
+
+
               </div>
             </div>
           ))}
@@ -135,6 +163,38 @@ function ChatBox() {
           </button>
         </div>
       </div>
+
+
+      {/* Edit Modal */}
+      {editingID && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+            <h2 className="text-xl font-semibold mb-4">Edit Message</h2>
+            <input
+              type="text"
+              value={updatedmsg}
+              onChange={(e) => setUpdatedmsg(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg mb-4 outline-none focus:ring-2 focus:ring-purple-400"
+              autoFocus
+            />
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => seteditingID(null)}
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                // onClick={handleEditSubmit}
+                className="px-4 py-2 rounded bg-purple-500 text-white hover:bg-purple-600"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }
