@@ -23,8 +23,10 @@ const messageSchema = new mongoose.Schema({
 {
   timestamps: {
     createdAt: true,
-    updatedAt: false
-  }
+    updatedAt: true
+  },
+  versionKey: '__v',
+  optimisticConcurrency: true
 });
 
 messageSchema.index({roomID:1})
