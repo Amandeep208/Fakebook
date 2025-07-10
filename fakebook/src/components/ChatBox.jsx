@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { BACKEND_URL } from "../config.js";
 import TopBar from "./TopBar.jsx";
 import useIsMobile from "../hooks/uselsMobile.js";
+import edit from '../assets/edit.svg';
 import { redirect } from "react-router-dom";
 
 function ChatBox() {
@@ -52,7 +53,6 @@ function ChatBox() {
       setMessages((prev) => [...prev, result.message]); // Instantly show message
       setInput("");
     }
-   
   };
 
   if (!selectedUser) {
@@ -80,20 +80,35 @@ function ChatBox() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 border-x border-gray-300 overflow-y-auto p-4 bg-white">
+        <div className="flex-1 border-x border-black-300  overflow-y-auto p-4 bg-white">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`mb-2 flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"}`}
+              className={`mb-2  flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"
+                }`}
             >
               <div
-                className={`px-4 py-2 rounded-lg max-w-[70%] ${
-                  msg.sender === selectedUser.username
+                className={`group relative flex flex-row justify-between px-4 py-2 rounded-lg min-w-[10rem] max-w-[70%] ${msg.sender === selectedUser.username
                     ? "bg-gray-200 text-left"
-                    : "bg-purple-100 text-right font-bold"
-                }`}
+                    : "bg-purple-200 text-left "
+                  }`}
               >
-                {msg.content}
+                <div>
+                  {msg.content}
+                </div>
+
+                {/* Timestamp */}
+                <div className="text-xs text-right mt-auto ml-4">
+                  {(new Date(msg.createdAt)).getHours().toString().padStart(2, "0")}:
+                  {(new Date(msg.createdAt)).getMinutes().toString().padStart(2, "0")}
+                </div>
+
+                {/* Edit button - appears on hover */}
+                {msg.sender === selectedUser.username ? null : (
+                  <button className="hidden group-hover:block absolute top-1 right-1">
+                    <img src={edit} alt="edit" className="w-4" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -107,9 +122,7 @@ function ChatBox() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                sendMessage();
-              }
+              if (e.key === "Enter") sendMessage();
             }}
             placeholder="Type a message..."
             className="flex-1 px-4 py-2 rounded-full border border-gray-300 outline-none focus:ring-2 focus:ring-[#9085c6]"
