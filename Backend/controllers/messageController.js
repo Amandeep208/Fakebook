@@ -49,9 +49,16 @@ exports.editMessage = async (req, res) => {
   const { messageID, newMessage } = req.body;
 
   try {
+
+    
     const doc = await Message.findById(messageID);
     if (!doc) {
-      return res.status(404).json({ success: false, message: "Could not edit the message!"});
+      return res.status(400).json({ success: false, message: "Could not edit the message!"});
+    }
+    
+    // Authority Check
+    if (req.session.user.username != doc.sender) {
+      return res.status(400).json({ success: false, message: "Unauthorized edit not permitted!"})
     }
 
     if (typeof newMessage != 'string' || newMessage.trim() == "") {
