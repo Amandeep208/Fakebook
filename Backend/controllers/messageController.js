@@ -49,8 +49,6 @@ exports.editMessage = async (req, res) => {
   const { messageID, newMessage } = req.body;
 
   try {
-
-    
     const doc = await Message.findById(messageID);
     if (!doc) {
       return res.status(400).json({ success: false, message: "Could not edit the message!"});
