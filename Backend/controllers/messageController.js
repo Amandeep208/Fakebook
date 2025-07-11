@@ -1,5 +1,3 @@
-// const message = require("../model/message")
-
 const message = require("../model/message")
 const Message = require("../model/message")
 const User = require("../model/user")
@@ -51,20 +49,20 @@ exports.editMessage = async (req, res) => {
   try {
     const doc = await Message.findById(messageID);
     if (!doc) {
-      return res.status(400).json({ success: false, message: "Could not edit the message!"});
+      return res.status(400).json({ success: false, message: "Could not edit the message!" });
     }
-    
+
     // Authority Check
     if (req.session.user.username != doc.sender) {
-      return res.status(400).json({ success: false, message: "Unauthorized edit not permitted!"})
+      return res.status(400).json({ success: false, message: "Unauthorized edit not permitted!" })
     }
 
     if (typeof newMessage != 'string' || newMessage.trim() == "") {
-      return res.status(400).json({ success: false, message: "Invalid message content!"});
+      return res.status(400).json({ success: false, message: "Invalid message content!" });
     }
 
     if (doc.content == newMessage.trim()) {
-      return res.status(400).json({ success: false, message: "No changes in the new message!"})
+      return res.status(400).json({ success: false, message: "No changes in the new message!" })
     }
 
     doc.content = newMessage.trim();
@@ -73,6 +71,34 @@ exports.editMessage = async (req, res) => {
     return res.status(200).json({ success: true, message: "Message edited successfully", result });
   }
   catch (err) {
-    return res.status(500).json({ success: false, message: "Could not edit the message!", error: err.message});
+    return res.status(500).json({ success: false, message: "Could not edit the message!", error: err.message });
+  }
+}
+
+
+// Deletes a message: Recieves ObjectID of message, checks authority, performs documents deltion, returns status.
+exports.deleteMessage = async (req, res) => {
+  try {
+    const messageID = req.params.msgID;
+    
+    const doc = await Message.findById(messageID);
+    
+    // Check if message exists
+    if (!doc) {
+      return res.status(400).json({ success: false, message: "Invalid mesaage ID!"});
+    }
+
+    // Authority Check
+    if (req.session.user.username != doc.sender) {
+      return res.status(403).json({ success: false, message: "Unauthorized delete not permitted!"});
+    }
+
+    // Message Deletion
+    console.log(doc);
+    const result = await Message.findByIdAndDelete(messageID);
+    return res.status(200).json({ success: true, message: "Message successfully deleted", deletedMessage: result });
+  }
+  catch (err) {
+    return res.status(500).json({ success: false, message: "Could not delete the message!", error: err.message });
   }
 }
