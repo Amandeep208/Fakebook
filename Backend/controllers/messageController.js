@@ -1,5 +1,6 @@
 // const message = require("../model/message")
 
+const message = require("../model/message")
 const Message = require("../model/message")
 const User = require("../model/user")
 
@@ -42,19 +43,36 @@ exports.sendMessage = async (req, res) => {
   res.json({ success: true, message });
 }
 
-// Edits a message: Recieves ObjectID, update message.
+
+// Edits a message: Recieves ObjectID, new message then updates message and increments version key, sends back updated message.
 exports.editMessage = async (req, res) => {
   const { messageID, newMessage } = req.body;
 
   try {
-    const result = await Message.updateOne(
-      { _id: messageID }, 
-      { $set: { content: newMessage } }
-    );
+    const doc = await Message.findById(messageID);
+    if (!doc) {
+      return res.status(400).json({ success: false, message: "Could not edit the message!"});
+    }
+    
+    // Authority Check
+    if (req.session.user.username != doc.sender) {
+      return res.status(400).json({ success: false, message: "Unauthorized edit not permitted!"})
+    }
 
-    return res.json({ success: true, message: "Message edited successfully", result })
+    if (typeof newMessage != 'string' || newMessage.trim() == "") {
+      return res.status(400).json({ success: false, message: "Invalid message content!"});
+    }
+
+    if (doc.content == newMessage.trim()) {
+      return res.status(400).json({ success: false, message: "No changes in the new message!"})
+    }
+
+    doc.content = newMessage.trim();
+    doc.markModified('content');
+    const result = await doc.save();
+    return res.status(200).json({ success: true, message: "Message edited successfully", result });
   }
   catch (err) {
-    return res.json({ success: false, message: "Could not edit the message!", error: err.message });
+    return res.status(500).json({ success: false, message: "Could not edit the message!", error: err.message});
   }
 }
