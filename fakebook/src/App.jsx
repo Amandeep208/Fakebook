@@ -12,6 +12,7 @@ import BottomBar from './components/BottomBar';
 import useIsMobile from './hooks/uselsMobile';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import HomeProfile from './components/HomeProfile';
 
 const AppContent = () => {
   const location = useLocation();
@@ -63,7 +64,7 @@ const AppContent = () => {
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
-                <HomeComplete />
+                < HomeProfile/>
               </ProtectedRoute>
             } />
             <Route path="/chat" element={

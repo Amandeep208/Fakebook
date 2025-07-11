@@ -1,7 +1,9 @@
 import { useChat } from "../context/ChatContext";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config.js"
-import logo from "../assets/fakebook-logo.png"; 
+import { Link } from 'react-router-dom';
+import ProfileImg from '../assets/Profile.svg'
+import logo from "../assets/fakebook-logo.png";
 
 
 const TopBar = () => {
@@ -31,6 +33,7 @@ const TopBar = () => {
       <div className="logo">
         <img className="w-40 " src={logo} alt="" />
       </div>
+      
       <button
         onClick={handleLogout}
         className="bg-purple-600 text-white px-5 py-2 rounded-3xl  font-semibold hover:bg-purple-700"
