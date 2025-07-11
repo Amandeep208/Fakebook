@@ -3,19 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import { BACKEND_URL } from "../config.js";
 import TopBar from "./TopBar.jsx";
 import useIsMobile from "../hooks/uselsMobile.js";
-import edit from '../assets/edit.svg';
-import { redirect } from "react-router-dom";
+import edit from "../assets/edit.svg";
 
 function ChatBox() {
   const isMobile = useIsMobile();
   const { selectedUser } = useChat();
   const [messages, setMessages] = useState([]);
-  const [editingID, seteditingID] = useState(false)
-  const [updatedmsg, setUpdatedmsg] = useState("")
+  const [editingID, seteditingID] = useState(null);
+  const [updatedmsg, setUpdatedmsg] = useState("");
   const [input, setInput] = useState("");
   const scrollRef = useRef();
 
-  // Fetch messages every 2 seconds
   useEffect(() => {
     if (!selectedUser) return;
 
@@ -32,13 +30,12 @@ function ChatBox() {
     fetchMessages();
     const interval = setInterval(fetchMessages, 2000);
     return () => clearInterval(interval);
-  }, [selectedUser]);
+  }, [selectedUser, messages]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send message
   const sendMessage = async () => {
     if (!input.trim() || !selectedUser) return;
 
@@ -52,8 +49,40 @@ function ChatBox() {
     const result = await res.json();
 
     if (result.success) {
-      setMessages((prev) => [...prev, result.message]); // Instantly show message
+      setMessages((prev) => [...prev, result.message]);
       setInput("");
+    }
+  };
+
+  const handleEditClick = (id, oldContent) => {
+    setUpdatedmsg(oldContent);
+    seteditingID(id);
+  };
+
+  const handleEditSubmit = async (editingID, updatedmsg) => {
+    const res = await fetch(`${BACKEND_URL}/messages/edit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        messageID: editingID,
+        newMessage: updatedmsg,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === editingID ? { ...msg, content: updatedmsg } : msg
+        )
+      );
+      seteditingID(null);
+    } else {
+      console.error("Edit failed", result.message);
     }
   };
 
@@ -61,22 +90,14 @@ function ChatBox() {
     return (
       <>
         {isMobile && <TopBar />}
-        <div className="h-[80vh]">
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Select a user to start chatting
-          </div>
+        <div className="h-[80vh] flex items-center justify-center text-gray-500">
+          Select a user to start chatting
         </div>
       </>
     );
   }
 
   const height = isMobile ? "70vh" : "90vh";
-  function handleEditClick(id, oldContent) {
-    setUpdatedmsg(oldContent)
-    seteditingID(id)
-    // const newMessage = prompt()
-    console.log(id, oldContent)
-  }
 
   return (
     <>
@@ -88,22 +109,20 @@ function ChatBox() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 border-x border-black-300  overflow-y-auto p-4 bg-white">
+        <div className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white">
           {messages.map((msg, i) => (
             <div
-              key={i}
-              className={`mb-2  flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"
-                }`}
+              key={msg._id}
+              className={`mb-2 flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"}`}
             >
               <div
-                className={`group relative flex flex-row justify-between px-4 py-2 rounded-lg min-h-[3rem] min-w-[10rem] max-w-[70%] ${msg.sender === selectedUser.username
-                  ? "bg-gray-200 text-left"
-                  : "bg-purple-200 text-left "
-                  }`}
+                className={`group relative px-4 py-2 rounded-lg min-h-[3rem] min-w-[10rem] max-w-[70%] ${
+                  msg.sender === selectedUser.username
+                    ? "bg-gray-200 text-left"
+                    : "bg-purple-200 text-left"
+                }`}
               >
-                <div>
-                  {msg.content}
-                </div>
+                <div>{msg.content}</div>
 
                 {/* Timestamp */}
                 <div className="text-xs text-right mt-auto ml-4">
@@ -111,39 +130,22 @@ function ChatBox() {
                   {(new Date(msg.createdAt)).getMinutes().toString().padStart(2, "0")}
                 </div>
 
-
-
-
-
-
-
-
-
-
-                {/* Edit button - appears on hover */}
-                {msg.sender === selectedUser.username ? null : (
+                {/* Edit Button (if user is sender) */}
+                {msg.sender !== selectedUser.username && (
                   <button
-                    key={messages._id}
-                    onClick={() => handleEditClick(msg._id, msg.content)} className="hidden group-hover:block absolute top-1 right-1">
+                    onClick={() => handleEditClick(msg._id, msg.content)}
+                    className="hidden group-hover:block absolute top-1 right-1"
+                  >
                     <img src={edit} alt="edit" className="w-4" />
                   </button>
                 )}
-
-
-
-
-
-
-
-
-
               </div>
             </div>
           ))}
           <div ref={scrollRef}></div>
         </div>
 
-        {/* Input */}
+        {/* Input Box */}
         <div className="flex items-center border border-t-0 border-gray-300 rounded-b-xl p-2 bg-white">
           <input
             type="text"
@@ -164,7 +166,6 @@ function ChatBox() {
         </div>
       </div>
 
-
       {/* Edit Modal */}
       {editingID && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -174,6 +175,9 @@ function ChatBox() {
               type="text"
               value={updatedmsg}
               onChange={(e) => setUpdatedmsg(e.target.value)}
+              onKeyDown={(e) => {
+              if (e.key === "Enter") handleEditSubmit(editingID,updatedmsg);
+            }}
               className="w-full px-4 py-2 border rounded-lg mb-4 outline-none focus:ring-2 focus:ring-purple-400"
               autoFocus
             />
@@ -185,7 +189,7 @@ function ChatBox() {
                 Cancel
               </button>
               <button
-                // onClick={handleEditSubmit}
+                onClick={() => handleEditSubmit(editingID, updatedmsg)}
                 className="px-4 py-2 rounded bg-purple-500 text-white hover:bg-purple-600"
               >
                 Save
@@ -194,7 +198,6 @@ function ChatBox() {
           </div>
         </div>
       )}
-
     </>
   );
 }
