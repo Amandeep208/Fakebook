@@ -5,6 +5,8 @@ import TopBar from "./TopBar.jsx";
 import useIsMobile from "../hooks/uselsMobile.js";
 import delete_img from "../assets/delete.svg";
 import edit from "../assets/edit.svg";
+import EmojiPicker from "emoji-picker-react";
+import EmojiIcon from "../assets/emoji_icon.svg";
 
 function ChatBox() {
   const isMobile = useIsMobile();
@@ -15,6 +17,21 @@ function ChatBox() {
   const [deletemsg, setDeletemsg] = useState(null)
   const [input, setInput] = useState("");
   const scrollRef = useRef();
+  const [showPicker, setShowPicker] = useState(false);
+  const [emojiButtonColor, setEmojiButtonColor] = useState("bg-white");
+
+  const onEmojiClick = (emojiData) => {
+    setInput((prev) => prev + emojiData.emoji);
+  };
+
+  useEffect(() => {
+    if (showPicker == true) {
+      setEmojiButtonColor("bg-gray-200");
+    }
+    else {
+      setEmojiButtonColor("bg-white");
+    }
+  }, [showPicker]);
 
   useEffect(() => {
     if (!selectedUser) return;
@@ -39,6 +56,8 @@ function ChatBox() {
   }, [messages]);
 
   const sendMessage = async () => {
+    setShowPicker(false);
+
     if (!input.trim() || !selectedUser) return;
 
     const res = await fetch(`${BACKEND_URL}/messages/send`, {
@@ -130,13 +149,14 @@ function ChatBox() {
     <>
       {isMobile && <TopBar />}
       <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2`}>
+
         {/* Chat Header */}
-        <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold">
+        <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold" onClick={() => setShowPicker(false)}>
           {selectedUser.name} ({selectedUser.username})
         </div>
 
         {/* Messages */}
-        <div className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white">
+        <div className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white" onClick={() => setShowPicker(false)}>
           {messages.map((msg, i) => (
             <div
               key={msg._id}
@@ -215,17 +235,30 @@ function ChatBox() {
         </div>
 
         {/* Input Box */}
-        <div className="flex items-center border border-t-0 border-gray-300 rounded-b-xl p-2 bg-white">
+        <div className="flex relative items-center border border-t-0 border-gray-300 rounded-b-xl p-2 bg-white">
+
+          {/* Emoji Picker and trigger button */}
+          <img src={EmojiIcon} onClick={() => setShowPicker((val) => !val)} className={`cursor-pointer ml-2 mr-2 w-8 h-8 rounded-full hover:bg-gray-200 p-0 ${emojiButtonColor}`}></img>
+          {showPicker &&
+            <div className="absolute z-10 mb-16 -translate-y-1/2">
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </div>
+          }
+
+          {/* Input Field */}
           <input
             type="text"
             value={input}
+            onClick={(e) => setShowPicker(false)}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") sendMessage();
             }}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 rounded-full border border-gray-300 outline-none focus:ring-2 focus:ring-[#9085c6]"
+            className="min-w-0 flex-1 px-4 py-2 rounded-full border border-gray-300 outline-none focus:ring-2 focus:ring-[#9085c6]"
           />
+
+          {/* Send Button */}
           <button
             onClick={sendMessage}
             className="ml-3 bg-[#9085c6] text-white py-3 px-6 rounded-full hover:bg-[#7d72c3] transition"
