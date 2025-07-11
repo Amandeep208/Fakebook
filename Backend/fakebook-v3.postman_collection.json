@@ -175,7 +175,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"receiver\": \"akshay111\",\r\n    \"content\": \"Good to meet you akshay!\"\r\n}",
+							"raw": "{\r\n    \"receiver\": \"akshay111\",\r\n    \"content\": \"akshayyyyyy\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -214,13 +214,13 @@
 					"response": []
 				},
 				{
-					"name": "Edit Message",
+					"name": "Edit a Message",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \r\n    \"messageID\": \"686fa96133b0ec73f9023def\", \r\n    \"newMessage\": \"what upp\"\r\n}",
+							"raw": "{ \r\n    \"messageID\": \"6870197fb991b0196bf5eadf\", \r\n    \"newMessage\": \"wha editssss asfais  upp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -235,6 +235,34 @@
 							"path": [
 								"messages",
 								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Message",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{backendURL}}/messages/delete/6870caa9e0f91f8d203e534a",
+							"host": [
+								"{{backendURL}}"
+							],
+							"path": [
+								"messages",
+								"delete",
+								"6870caa9e0f91f8d203e534a"
 							]
 						}
 					},
@@ -268,7 +296,7 @@
 	"variable": [
 		{
 			"key": "backendURL",
-			"value": "http://192.168.0.104:8081",
+			"value": "http://192.168.1.60:8081",
 			"type": "string"
 		}
 	]
