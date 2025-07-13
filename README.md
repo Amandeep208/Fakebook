@@ -6,6 +6,7 @@
 2. This app works on devices on the same LAN.
 3. The Frontend of this app is located in `./fakebook`.
 4. The Backend of this app is located in `./Backend`.
+5. `./Backend` contains `fakebook-v3.postman_collection.json` which is a postman collection for testing the backend.
 
 
 ## Configuration
