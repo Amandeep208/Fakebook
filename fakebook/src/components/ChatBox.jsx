@@ -19,11 +19,45 @@ function ChatBox() {
   const scrollRef = useRef();
   const [showPicker, setShowPicker] = useState(false);
   const [emojiButtonColor, setEmojiButtonColor] = useState("bg-white");
+  const messagesContainerRef = useRef(null);
+  const [atBottom, setAtBottom] = useState(false);
 
+  // Scroll Handler
+  const handleScroll = () => {
+    const container= messagesContainerRef.current;
+    if (!container) return;
+
+    // console.log('');
+    // console.log('Scroll Height: ', container.scrollHeight);
+    // console.log('Scroll Top: ', container.scrollTop);
+    // console.log('Client Height: ', container.clientHeight);
+    
+    const isNearBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 90;
+
+    console.log(isNearBottom);
+    setAtBottom(isNearBottom);
+  }
+
+
+
+  // Adds Scroll Listener on mount of the Message div.
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if(!container) return;
+
+    container.addEventListener('scroll', handleScroll);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [selectedUser]);
+
+  // Appends the emoji to the input field.
   const onEmojiClick = (emojiData) => {
     setInput((prev) => prev + emojiData.emoji);
   };
 
+  // Changes the background of the emoji button when showPicker changes.
   useEffect(() => {
     if (showPicker == true) {
       setEmojiButtonColor("bg-gray-200");
@@ -32,6 +66,7 @@ function ChatBox() {
       setEmojiButtonColor("bg-white");
     }
   }, [showPicker]);
+
 
   useEffect(() => {
     if (!selectedUser) return;
@@ -51,9 +86,13 @@ function ChatBox() {
     return () => clearInterval(interval);
   }, [selectedUser, messages]);
 
+
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (atBottom) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
+
 
   const sendMessage = async () => {
     setShowPicker(false);
@@ -75,6 +114,7 @@ function ChatBox() {
     }
   };
 
+
   const handleEditClick = (id, oldContent) => {
     setUpdatedmsg(oldContent);
     seteditingID(id);
@@ -83,6 +123,7 @@ function ChatBox() {
     setDeletemsg(id)
   }
 
+  
   const handleDeleteSubmit = async (deletemsg_id) => {
     const raw = ""
     const res = await fetch(`${BACKEND_URL}/messages/delete/${deletemsg}`, {
@@ -150,13 +191,15 @@ function ChatBox() {
       {isMobile && <TopBar />}
       <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2`}>
 
+        <button onClick={() => console.log(atBottom)}>Random</button>
+
         {/* Chat Header */}
         <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold" onClick={() => setShowPicker(false)}>
           {selectedUser.name} ({selectedUser.username})
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white" onClick={() => setShowPicker(false)}>
+        {/* Messages Container */}
+        <div ref={messagesContainerRef} className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white" onClick={() => setShowPicker(false)}>
           {messages.map((msg, i) => (
             <div
               key={msg._id}
@@ -220,15 +263,7 @@ function ChatBox() {
                   {(new Date(msg.createdAt)).getMinutes().toString().padStart(2, "0")}
                 </div>
                 </div>
-                
-
-
-
-
               </div>
-
-
-
             </div>
           ))}
           <div ref={scrollRef}></div>
@@ -300,11 +335,6 @@ function ChatBox() {
           </div>
         </div>
       )}
-
-
-
-
-
 
       {/* Trigering Delete Confirm */}
       {deletemsg && (
