@@ -20,11 +20,11 @@ function ChatBox() {
   const [showPicker, setShowPicker] = useState(false);
   const [emojiButtonColor, setEmojiButtonColor] = useState("bg-white");
   const messagesContainerRef = useRef(null);
-  const [atBottom, setAtBottom] = useState(false);
+  const [atBottom, setAtBottom] = useState(true);
 
   // Scroll Handler
   const handleScroll = () => {
-    const container= messagesContainerRef.current;
+    const container = messagesContainerRef.current;
     if (!container) return;
 
     // console.log('');
@@ -34,11 +34,9 @@ function ChatBox() {
     
     const isNearBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 90;
 
-    console.log(isNearBottom);
+    // console.log(isNearBottom);
     setAtBottom(isNearBottom);
   }
-
-
 
   // Adds Scroll Listener on mount of the Message div.
   useEffect(() => {
@@ -50,6 +48,24 @@ function ChatBox() {
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
+  }, [selectedUser]);
+
+  // Scrolls to bottom of the messages
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Goes directly to bottom of the messages.
+  const goToBottom = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    container.scrollTop = container.scrollHeight;
+  };
+
+  // When a new user is selected, the scroll bottom button should be not visible
+  useEffect(() => {
+    setAtBottom(true);
   }, [selectedUser]);
 
   // Appends the emoji to the input field.
@@ -87,6 +103,13 @@ function ChatBox() {
   }, [selectedUser, messages]);
 
 
+  // Trying to go to the bottom of messages when component loads
+  // useEffect(() => {
+  //     scrollRef.current?.scrollIntoView({ behavior: 'auto'});
+  // }, []);
+
+
+  // Conditional AutoScroll
   useEffect(() => {
     if (atBottom) {
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -111,6 +134,7 @@ function ChatBox() {
     if (result.success) {
       setMessages((prev) => [...prev, result.message]);
       setInput("");
+      goToBottom();
     }
   };
 
@@ -191,8 +215,6 @@ function ChatBox() {
       {isMobile && <TopBar />}
       <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2`}>
 
-        <button onClick={() => console.log(atBottom)}>Random</button>
-
         {/* Chat Header */}
         <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold" onClick={() => setShowPicker(false)}>
           {selectedUser.name} ({selectedUser.username})
@@ -271,6 +293,8 @@ function ChatBox() {
 
         {/* Input Box */}
         <div className="flex relative items-center border border-t-0 border-gray-300 rounded-b-xl p-2 bg-white">
+
+          {atBottom==false && <button onClick={scrollToBottom} className="absolute right-7 bottom-20 bg-[#7e22ce] text-white h-10 w-10 rounded-full">↓</button>}
 
           {/* Emoji Picker and trigger button */}
           <img src={EmojiIcon} onClick={() => setShowPicker((val) => !val)} className={`cursor-pointer ml-2 mr-2 w-8 h-8 rounded-full hover:bg-gray-200 p-0 ${emojiButtonColor}`}></img>
