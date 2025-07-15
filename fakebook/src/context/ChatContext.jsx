@@ -6,6 +6,8 @@ const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [theme, setTheme] = useState("");
+  
 
   // Get session user once
   useEffect(() => {
@@ -21,7 +23,7 @@ export const ChatProvider = ({ children }) => {
   }, [loggedInUser]);
 
   return (
-    <ChatContext.Provider value={{ selectedUser, setSelectedUser, loggedInUser, setLoggedInUser }}>
+    <ChatContext.Provider value={{ selectedUser, setSelectedUser, loggedInUser, setLoggedInUser, theme, setTheme }}>
       {children}
     </ChatContext.Provider>
   );

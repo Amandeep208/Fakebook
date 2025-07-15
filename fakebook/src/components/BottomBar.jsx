@@ -6,7 +6,7 @@ import ProfileImg from '../assets/3.svg'
 function BottomBar() {
 
     return (
-        <div className="absolute bottom-0 w-full bg-[#9085c6] text-white flex justify-around items-center h-16 z-50">
+        <div className="absolute bottom-0 w-full bg-[#9085c6] text-white flex justify-around items-center h-16 z-50 dark:bg-[#59168b]">
             <Link to="/">
                 <div className="flex flex-col items-center cursor-pointer hover:opacity-90">
                     <img src={ListImg} alt="List Image"></img>
