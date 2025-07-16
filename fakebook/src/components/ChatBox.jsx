@@ -21,12 +21,41 @@ function ChatBox() {
   const [emojiButtonColor, setEmojiButtonColor] = useState("bg-white");
   const messagesContainerRef = useRef(null);
   const [atBottom, setAtBottom] = useState(true);
+  const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
+  const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
+  const [newMessagesCounter, setNewMessagesCounter] = useState(0);
+
+  // useEffect(() => {
+  //   if (newMessagesCounter == 1) {
+  //     alert("New message banner shows");
+  //   }
+  //   else if (newMessagesCounter == 0) {
+  //     alert("Message Banner vanishes");
+  //   }
+  // }, [newMessagesCounter]);
+
+  useEffect(() => {
+    if (newMessagesIndicator) {
+      setNewMessageColor("bg-[#ff6c00]");
+    }
+    else {
+      setNewMessageColor("bg-[#000000]");
+    } 
+  }, [newMessagesIndicator]);
+
+  const toggleStatus = () => {
+    setNewMessagesIndicator((prev) => !prev);
+  };
 
   const handleScroll = () => {
     const container = messagesContainerRef.current;
     if (!container) return;
     const isNearBottom = Math.abs(container.scrollHeight - container.scrollTop - container.clientHeight) < 90;
     setAtBottom(isNearBottom);
+    if (isNearBottom) {
+      setNewMessagesCounter(0);
+      setNewMessagesIndicator(false);
+    }
   };
 
   useEffect(() => {
@@ -50,6 +79,8 @@ function ChatBox() {
 
   useEffect(() => {
     setAtBottom(true);
+    setNewMessagesIndicator(false);
+    setNewMessagesCounter(0);
   }, [selectedUser]);
 
   const onEmojiClick = (emojiData) => {
@@ -79,6 +110,10 @@ function ChatBox() {
   useEffect(() => {
     if (atBottom) {
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    else {
+      setNewMessagesCounter((prev) => prev + 1);
+      setNewMessagesIndicator(true);
     }
   }, [messages]);
 
@@ -220,13 +255,19 @@ function ChatBox() {
 
         <div className="flex relative items-center border border-t-0 border-gray-300 rounded-b-xl p-2 bg-white dark:bg-[#1e1e1e] dark:border-gray-600">
           {!atBottom && (
-            <button
-              onClick={scrollToBottom}
-              className="absolute right-7 bottom-20 bg-[#7d72c3] text-white h-10 w-10 rounded-full cursor-pointer"
-            >
-              ↓
-            </button>
+            <div>
+              <button
+                onClick={scrollToBottom}
+                className="absolute right-7 bottom-20 bg-[#9e9e9e] text-white h-10 w-10 rounded-full cursor-pointer"
+              >
+                ↓
+              </button>
+              {newMessagesIndicator && <div className="absolute bottom-27 right-6 rounded-full bg-[#7d72c3] h-4 w-4 text-xs text-center text-white">{newMessagesCounter}</div>}
+            </div>
           )}
+
+          {/* <div className={`${newMessageColor} h-10 w-10`}></div> */}
+          
           <svg
             onClick={() => setShowPicker((val) => !val)}
             xmlns="http://www.w3.org/2000/svg"
