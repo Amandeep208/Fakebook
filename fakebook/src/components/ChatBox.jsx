@@ -24,7 +24,9 @@ function ChatBox() {
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
   const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
+  // Changes
   const [messagesPage, setMessagesPage] = useState(1);
+  const [displayedPages, setDisplayedPages] = useState([1]);
 
   // useEffect(() => {
   //   if (newMessagesCounter == 1) {
@@ -104,9 +106,10 @@ function ChatBox() {
       }
     }
     fetchMessages();
-    const interval = setInterval(fetchMessages, 2000);
-    return () => clearInterval(interval);
-  }, [selectedUser, messages]);
+    // const interval = setInterval(fetchMessages, 2000);
+    // return () => clearInterval(interval);
+  // }, [selectedUser, messages]);
+  }, [selectedUser]);
 
   useEffect(() => {
     if (atBottom) {
@@ -193,6 +196,7 @@ function ChatBox() {
 
   // const height = isMobile ? "70vh" : "90vh";
 
+  // Changes
   const fetchPaginatedMessages = async () => {
     if (!selectedUser) return;
     
@@ -201,8 +205,12 @@ function ChatBox() {
     });
     const data = await res.json();
     console.log("Raw Data", data, data.length);
-    if (JSON.stringify(data) !== JSON.stringify(messages)) {
-      setMessages(data);
+    console.log("Current Messages", messages, messages.length);
+    console.log(JSON.stringify(data) == JSON.stringify(messages));
+    if (!displayedPages.includes(messagesPage)) {
+      console.log("Appending");
+      setMessages((prev) => data.concat(prev));
+      displayedPages.push(messagesPage)
     }
   };
 
