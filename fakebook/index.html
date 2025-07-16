@@ -1,18 +1,25 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="theme-color" content="#7d72c3">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body class="h-full">
-    <div id="root" class="h-full dark:bg-[#161439]"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-  <script>
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="theme-color" content="#7d72c3">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <title>Vite + React</title>
+</head>
+
+<body class="h-full">
+  <div id="root" class="h-full dark:bg-[#161439]"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+<script>
   // Immediately set dark class before Tailwind loads
   const storedTheme = localStorage.getItem("theme");
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
