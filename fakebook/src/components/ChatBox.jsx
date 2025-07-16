@@ -155,12 +155,14 @@ function ChatBox() {
     );
   }
 
-  const height = isMobile ? "70vh" : "90vh";
+  // const height = isMobile ? "70vh" : "90vh";
 
   return (
     <>
       {isMobile && <TopBar />}
-      <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}>
+      {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
+        <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
+
         <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
           {selectedUser.name} ({selectedUser.username})
         </div>
