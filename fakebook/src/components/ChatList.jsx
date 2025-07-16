@@ -92,60 +92,78 @@ function ChatList() {
 
   return (
     <>
-    <div className="dark:bg=[#161439]">
+      <div className="dark:bg=[#161439]">
 
-      <TopBar />
+        <TopBar />
 
-      <div className="px-4 py-2 mt-5 text-xl text-black dark:text-white font-bold transition-colors duration-300">
-        {loggedInUser ? (
-          <div className="flex items-center">
-            {!isMobile && (
-              <Link to="/profile">
-                <div className="flex items-center justify-center h-[40px] cursor-pointer hover:opacity-90">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="24px" className="fill-[#7e22ce] h-[35px] dark:fill-white "><path d="M200-246q54-53 125.5-83.5T480-360q83 0 154.5 30.5T760-246v-514H200v514Zm280-194q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm69-80h422q-44-39-99.5-59.5T480-280q-56 0-112.5 20.5T269-200Zm211-320q-25 0-42.5-17.5T420-580q0-25 17.5-42.5T480-640q25 0 42.5 17.5T540-580q0 25-17.5 42.5T480-520Zm0 17Z"/></svg>
-                  {/* <img className="h-[35px]" src={ProfileImg} alt="Profile" /> */}
-                </div>
-              </Link>
-            )}
+        <div className="px-4 py-2 mt-5 text-xl text-black dark:text-white font-bold transition-colors duration-300">
+          {loggedInUser ? (
+            <div className="flex items-center">
+              {/* {!isMobile && ()}+++ */}
+      <Link to="/profile">
+        <div className="flex items-center h-[40px] cursor-pointer hover:opacity-90">
+          {/* Profile Icon */}
+          {!isMobile && (
 
-            <div className="ml-2 h-[40px] text-2xl">
-              {!isMobile ? loggedInUser.name : `Welcome, ${loggedInUser.name}`}
-            </div>
-
-            <button
-              onClick={toggleTheme}
-              className="ml-auto mr-5 p-2 px-4 transition duration-300 hover:cursor-pointer text-black dark:text-white"
+          <div className="flex items-center justify-center h-full w-[40px]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              className="fill-[#7e22ce] dark:fill-white"
             >
-              {theme === "dark" ? "🌙" : "☀️"}
-            </button>
+              <path d="M200-246q54-53 125.5-83.5T480-360q83 0 154.5 30.5T760-246v-514H200v514Zm280-194q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm69-80h422q-44-39-99.5-59.5T480-280q-56 0-112.5 20.5T269-200Zm211-320q-25 0-42.5-17.5T420-580q0-25 17.5-42.5T480-640q25 0 42.5 17.5T540-580q0 25-17.5 42.5T480-520Zm0 17Z" />
+            </svg>
           </div>
-        ) : (
-          "Loading user..."
-        )}
-      </div>
+          )}
 
-      <div className="h-[70vh] w-full pt-3 pb-10 overflow-y-auto">
-        {users.map((user) => (
-          <div
-            key={user.username}
-            onClick={() => handleSelect(user)}
-            className={`flex items-center gap-4 my-2 rounded-xl px-5 py-3 mx-2 cursor-pointer transition-colors duration-200 ${
-              selectedUser?.username === user.username
-                ? "bg-purple-200 text-purple-900 ring-2 ring-purple-400 font-semibold dark:bg-purple-800 dark:text-white dark:ring-purple-600"
-                : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
-            }`}
-          >
-            <div className="w-10 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
-              {user.name?.[0]?.toUpperCase() || "?"}
-            </div>
-            <div>
-              <p className="text-md">{user.name}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">@{user.username}</p>
-            </div>
+
+          {/* User Name */}
+          <div className="ml-2 text-[18px] font-medium leading-none h-full flex items-center font1">
+            <b>{` ${loggedInUser.name}`}</b>
           </div>
-        ))}
+        </div>
+      </Link>
+    
+
+              {/* <div className="ml-2 h-[40px] text-2xl">
+              {!isMobile ? loggedInUser.name : `Welcome, ${loggedInUser.name}`}
+            </div> */}
+
+              <button
+                onClick={toggleTheme}
+                className="ml-auto mr-5 p-2 px-4 transition duration-300 hover:cursor-pointer text-black dark:text-white"
+              >
+                {theme === "dark" ? "🌙" : "☀️"}
+              </button>
+            </div>
+          ) : (
+            "Loading user..."
+          )}
+        </div>
+
+        <div className="h-[70vh] w-full pt-3 pb-10 overflow-y-auto">
+          {users.map((user) => (
+            <div
+              key={user.username}
+              onClick={() => handleSelect(user)}
+              className={`flex items-center gap-4 my-2 rounded-xl px-5 py-3 mx-2 cursor-pointer transition-colors duration-200 ${selectedUser?.username === user.username
+                  ? "bg-purple-200 text-purple-900 ring-2 ring-purple-400 font-semibold dark:bg-purple-800 dark:text-white dark:ring-purple-600"
+                  : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
+                }`}
+            >
+              <div className="w-10 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
+                {user.name?.[0]?.toUpperCase() || "?"}
+              </div>
+              <div>
+                <p className="text-md">{user.name}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">@{user.username}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
 
     </>
   );
