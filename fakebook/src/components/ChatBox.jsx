@@ -141,7 +141,6 @@ function ChatBox() {
   }, [selectedUser]);
 
   useEffect(() => {
-    // Conditional Auto Scroll
     if (atBottom) {
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     }
@@ -258,7 +257,6 @@ function ChatBox() {
     console.log("Raw Data", data, data.length);
     console.log("Current Messages", messages, messages.length);
     console.log(JSON.stringify(data) == JSON.stringify(messages));
-
     if (data2.length == 0) {
       console.log("All messages fetched");
       setAllMessagesFetched((prev) => {
@@ -268,16 +266,11 @@ function ChatBox() {
         return false;
       });
     }
-
     if (!displayedPages.includes(messagesPage)) {
       console.log("Appending");
       setMessages((prev) => data.concat(prev));
       displayedPages.push(messagesPage)
       setMessagesPage((prev) => prev + 1);
-
-      if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = 20;
-      }
     }
   };
 
