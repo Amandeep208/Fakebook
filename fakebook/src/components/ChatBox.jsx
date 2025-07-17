@@ -156,12 +156,13 @@ function ChatBox() {
     }
     
     async function fetchMessagesUpto() {
-      console.log(oldestPageLoadedRef.current);
       const finalData = await fetchMessagesUptoPage(oldestPageLoadedRef.current);
-      console.log(finalData);
-      
       if (JSON.stringify(finalData) != JSON.stringify(messages)) {
+        console.log("\nNew messages are different");
         setMessages(finalData);
+      }
+      else {
+        console.log("\nNew messages are same");
       }
     }
 
@@ -171,7 +172,7 @@ function ChatBox() {
     const interval = setInterval(fetchMessagesUpto, 2000);
     return () => clearInterval(interval);
 
-  }, [selectedUser]);
+  }, [selectedUser, messages]);
 
 
 
@@ -275,9 +276,6 @@ function ChatBox() {
         setOldestPageLoaded((prev) => prev + 1);
         messagesContainerRef.current.scrollTop = 0.5;
       }
-      // if (JSON.stringify(data) !== JSON.stringify(messages)) {
-      //   setMessages(data);
-      // }
     }
     fetchMessages();
   }
