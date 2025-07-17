@@ -26,8 +26,15 @@ function ChatBox() {
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
   // Changes
   const [oldestPageLoaded, setOldestPageLoaded] = useState(1);
+  const oldestPageLoadedRef = useRef(oldestPageLoaded);
   const [trigger, setTrigger] = useState(false);
 
+
+  // Keeps OPLRef in sync with OPL
+  useEffect(() => {
+    oldestPageLoadedRef.current = oldestPageLoaded;
+  }, [oldestPageLoaded]);
+  
   // useEffect(() => {
   //   if (newMessagesCounter == 1) {
   //     alert("New message banner shows");
@@ -125,12 +132,10 @@ function ChatBox() {
     }
     if (!selectedUser) return;
     fetchMessages();
-    // const interval = setInterval(fetchMessages, 2000);
-    // return () => clearInterval(interval);
   }, [selectedUser]);
 
 
-  // Subsequent request for messages
+  // Subsequent 2 Sec automatic request for messages
   useEffect(() => {
     async function fetchMessages(page) {
       const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${page}`, {
@@ -149,20 +154,24 @@ function ChatBox() {
       }
       return compiledData;
     }
-
-    if (!selectedUser) return;
     
-    async function fetchMessagesUpto(page) {
-      const finalData = await fetchMessagesUptoPage(oldestPageLoaded);
+    async function fetchMessagesUpto() {
+      console.log(oldestPageLoadedRef.current);
+      const finalData = await fetchMessagesUptoPage(oldestPageLoadedRef.current);
       console.log(finalData);
-
+      
       if (JSON.stringify(finalData) != JSON.stringify(messages)) {
         setMessages(finalData);
       }
-
     }
-    fetchMessagesUpto();
-  }, [trigger]);
+
+    if (!selectedUser) return;
+
+    fetchMessagesUpto(oldestPageLoadedRef.current);
+    const interval = setInterval(fetchMessagesUpto, 2000);
+    return () => clearInterval(interval);
+
+  }, [selectedUser]);
 
 
 
