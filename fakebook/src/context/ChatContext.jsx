@@ -20,7 +20,7 @@ export const ChatProvider = ({ children }) => {
     }
 
     fetchUser();
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <ChatContext.Provider value={{ selectedUser, setSelectedUser, loggedInUser, setLoggedInUser, theme, setTheme }}>
