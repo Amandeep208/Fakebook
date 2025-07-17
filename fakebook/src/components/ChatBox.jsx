@@ -112,7 +112,7 @@ function ChatBox() {
   // }, [selectedUser, messages]);
 
 
-  // Fetching first 20 messages
+  // Fetching first 20 messages automatically
   useEffect(() => {
     async function fetchMessages() {
       const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=1`, {
@@ -129,6 +129,7 @@ function ChatBox() {
     // return () => clearInterval(interval);
   }, [selectedUser]);
 
+
   // Subsequent request for messages
   useEffect(() => {
     async function fetchMessages(page) {
@@ -143,11 +144,8 @@ function ChatBox() {
     async function fetchMessagesUptoPage(uptoPage) {
       let compiledData = [];
       for (let i = uptoPage; i > 0; i--) {
-        console.log(i);
         const dataSegment = await fetchMessages(i);
-        console.log(dataSegment);
         compiledData = compiledData.concat(dataSegment);
-        console.log(compiledData);
       }
       return compiledData;
     }
@@ -155,12 +153,15 @@ function ChatBox() {
     if (!selectedUser) return;
     
     async function fetchMessagesUpto(page) {
-      const finalData = await fetchMessagesUptoPage(page);
+      const finalData = await fetchMessagesUptoPage(oldestPageLoaded);
       console.log(finalData);
+
+      if (JSON.stringify(finalData) != JSON.stringify(messages)) {
+        setMessages(finalData);
+      }
+
     }
-
-    fetchMessagesUpto(4);
-
+    fetchMessagesUpto();
   }, [trigger]);
 
 
