@@ -24,6 +24,9 @@ function ChatBox() {
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
   const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
+  // Changes
+  const [oldestPageLoaded, setOldestPageLoaded] = useState(1);
+  const [trigger, setTrigger] = useState(false);
 
   // useEffect(() => {
   //   if (newMessagesCounter == 1) {
@@ -40,7 +43,7 @@ function ChatBox() {
     }
     else {
       setNewMessageColor("bg-[#000000]");
-    } 
+    }
   }, [newMessagesIndicator]);
 
   const toggleStatus = () => {
@@ -81,6 +84,7 @@ function ChatBox() {
     setAtBottom(true);
     setNewMessagesIndicator(false);
     setNewMessagesCounter(0);
+    setOldestPageLoaded(1);
   }, [selectedUser]);
 
   const onEmojiClick = (emojiData) => {
@@ -91,10 +95,27 @@ function ChatBox() {
     setEmojiButtonColor(showPicker ? "bg-gray-200 dark:bg-gray-700" : "bg-white dark:bg-[#1e1e1e]");
   }, [showPicker]);
 
+  // useEffect(() => {
+  //   async function fetchMessages() {
+  //     const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}`, {
+  //       credentials: "include",
+  //     });
+  //     const data = await res.json();
+  //     if (JSON.stringify(data) !== JSON.stringify(messages)) {
+  //       setMessages(data);
+  //     }
+  //   }
+  //   if (!selectedUser) return;
+  //   fetchMessages();
+  //   // const interval = setInterval(fetchMessages, 2000);
+  //   // return () => clearInterval(interval);
+  // }, [selectedUser, messages]);
+
+
+  // Fetching first 20 messages
   useEffect(() => {
-    if (!selectedUser) return;
     async function fetchMessages() {
-      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}`, {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=1`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -102,10 +123,47 @@ function ChatBox() {
         setMessages(data);
       }
     }
+    if (!selectedUser) return;
     fetchMessages();
-    const interval = setInterval(fetchMessages, 2000);
-    return () => clearInterval(interval);
-  }, [selectedUser, messages]);
+    // const interval = setInterval(fetchMessages, 2000);
+    // return () => clearInterval(interval);
+  }, [selectedUser]);
+
+  // Subsequent request for messages
+  useEffect(() => {
+    async function fetchMessages(page) {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${page}`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      // console.log(data);
+      return data;
+    }
+
+    async function fetchMessagesUptoPage(uptoPage) {
+      let compiledData = [];
+      for (let i = uptoPage; i > 0; i--) {
+        console.log(i);
+        const dataSegment = await fetchMessages(i);
+        console.log(dataSegment);
+        compiledData = compiledData.concat(dataSegment);
+        console.log(compiledData);
+      }
+      return compiledData;
+    }
+
+    if (!selectedUser) return;
+    
+    async function fetchMessagesUpto(page) {
+      const finalData = await fetchMessagesUptoPage(page);
+      console.log(finalData);
+    }
+
+    fetchMessagesUpto(4);
+
+  }, [trigger]);
+
+
 
   useEffect(() => {
     if (atBottom) {
@@ -192,11 +250,38 @@ function ChatBox() {
 
   // const height = isMobile ? "70vh" : "90vh";
 
+  const handleLoadMore = () => {
+    console.log("Load more clicked");
+
+    async function fetchMessages() {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${oldestPageLoaded + 1}`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log(data);
+      setMessages((prev) => data.concat(prev));
+
+      if (data.length != 0) {
+        setOldestPageLoaded((prev) => prev + 1);
+        messagesContainerRef.current.scrollTop = 0.5;
+      }
+      // if (JSON.stringify(data) !== JSON.stringify(messages)) {
+      //   setMessages(data);
+      // }
+    }
+    fetchMessages();
+  }
+
   return (
     <>
+      <button onClick={() => setTrigger(!trigger)} className="bg-amber-700 text-white rounded mx-2 p-2 rounded-2xl cursor-pointer">Trigger</button>
+      <button onClick={() => setOldestPageLoaded((prev) => prev + 1)} className="bg-amber-200 rounded mx-2 p-2 rounded-2xl cursor-pointer">Increment OSL</button>
+      <button onClick={() => console.log(oldestPageLoaded)} className="bg-amber-200 rounded mx-2 p-2 rounded-2xl cursor-pointer">Print OSL</button>
+      <button onClick={handleLoadMore} className="bg-[#7d72c3] rounded mx-2 p-2 rounded-2xl cursor-pointer text-white">Load More</button>
+
       {isMobile && <TopBar />}
       {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
-        <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
+      <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
 
         <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
           {selectedUser.name} ({selectedUser.username})
@@ -267,7 +352,7 @@ function ChatBox() {
           )}
 
           {/* <div className={`${newMessageColor} h-10 w-10`}></div> */}
-          
+
           <svg
             onClick={() => setShowPicker((val) => !val)}
             xmlns="http://www.w3.org/2000/svg"
