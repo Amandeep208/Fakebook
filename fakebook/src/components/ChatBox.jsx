@@ -25,15 +25,17 @@ function ChatBox() {
   const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
   // Changes
-  const [messagesPage, setMessagesPage] = useState(2);
+  const [messagesPage, setMessagesPage] = useState(1);
   const [displayedPages, setDisplayedPages] = useState([1]);
-  const [showLoadMoreButton, setShowLoadMoreButton] = useState(false);
-  const [allMessagesFetched, setAllMessagesFetched] = useState(false);
-  const refAllMessagesFetched = useRef(allMessagesFetched);
 
-  useEffect(() => {
-    refAllMessagesFetched.current = allMessagesFetched;
-  }, [allMessagesFetched]);
+  // useEffect(() => {
+  //   if (newMessagesCounter == 1) {
+  //     alert("New message banner shows");
+  //   }
+  //   else if (newMessagesCounter == 0) {
+  //     alert("Message Banner vanishes");
+  //   }
+  // }, [newMessagesCounter]);
 
   useEffect(() => {
     if (newMessagesIndicator) {
@@ -41,7 +43,7 @@ function ChatBox() {
     }
     else {
       setNewMessageColor("bg-[#000000]");
-    }
+    } 
   }, [newMessagesIndicator]);
 
   const toggleStatus = () => {
@@ -56,18 +58,6 @@ function ChatBox() {
     if (isNearBottom) {
       setNewMessagesCounter(0);
       setNewMessagesIndicator(false);
-    }
-
-    if (refAllMessagesFetched.current == false) {
-      if (container.scrollTop < 50) {
-        setShowLoadMoreButton(true);
-      }
-      else {
-        setShowLoadMoreButton(() => false);
-      }
-    }
-    else {
-      setShowLoadMoreButton((() => false));
     }
   };
 
@@ -94,10 +84,6 @@ function ChatBox() {
     setAtBottom(true);
     setNewMessagesIndicator(false);
     setNewMessagesCounter(0);
-    setMessagesPage(2);
-    setDisplayedPages([1]);
-    setShowLoadMoreButton(false);
-    setAllMessagesFetched(false);
   }, [selectedUser]);
 
   const onEmojiClick = (emojiData) => {
@@ -114,22 +100,7 @@ function ChatBox() {
       const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}`, {
         credentials: "include",
       });
-      const res2 = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage + 1}`, {
-        credentials: "include"
-      });
       const data = await res.json();
-      const data2 = await res2.json();
-
-      if (data2.length == 0) {
-        console.log("All messages fetched");
-        setAllMessagesFetched((prev) => {
-          return true;
-        });
-        setShowLoadMoreButton((prev) => {
-          return false;
-        });
-      }
-
       if (JSON.stringify(data) !== JSON.stringify(messages)) {
         setMessages(data);
       }
@@ -137,7 +108,7 @@ function ChatBox() {
     fetchMessages();
     // const interval = setInterval(fetchMessages, 2000);
     // return () => clearInterval(interval);
-    // }, [selectedUser, messages]);
+  // }, [selectedUser, messages]);
   }, [selectedUser]);
 
   useEffect(() => {
@@ -225,85 +196,49 @@ function ChatBox() {
 
   // const height = isMobile ? "70vh" : "90vh";
 
-  // Debugging Code
-  // const fetchPaginatedMessages = async () => {
-  //   if (!selectedUser) return;
-
-  //   const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage}`, {
-  //     credentials: "include"
-  //   });
-  //   const data = await res.json();
-  //   console.log("Raw Data", data, data.length);
-  //   console.log("Current Messages", messages, messages.length);
-  //   console.log(JSON.stringify(data) == JSON.stringify(messages));
-  //   if (!displayedPages.includes(messagesPage)) {
-  //     console.log("Appending");
-  //     setMessages((prev) => data.concat(prev));
-  //     displayedPages.push(messagesPage)
-  //   }
-  // };
-
-  const loadMoreMessages = async () => {
+  // Changes
+  const fetchPaginatedMessages = async () => {
     if (!selectedUser) return;
-
+    
     const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage}`, {
       credentials: "include"
     });
-    const res2 = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage + 1}`, {
-      credentials: "include"
-    });
     const data = await res.json();
-    const data2 = await res2.json();
     console.log("Raw Data", data, data.length);
     console.log("Current Messages", messages, messages.length);
     console.log(JSON.stringify(data) == JSON.stringify(messages));
-    if (data2.length == 0) {
-      console.log("All messages fetched");
-      setAllMessagesFetched((prev) => {
-        return true;
-      });
-      setShowLoadMoreButton((prev) => {
-        return false;
-      });
-    }
     if (!displayedPages.includes(messagesPage)) {
       console.log("Appending");
       setMessages((prev) => data.concat(prev));
       displayedPages.push(messagesPage)
-      setMessagesPage((prev) => prev + 1);
     }
   };
 
   return (
     <>
-      {/* Debugging Code */}
-      {/* Logs messagesPage */}
-      {/* <button onClick={() => console.log(messagesPage)} className="bg-amber-600 rounded-2xl cursor-pointer px-3 py-1 mx-2">Show messagesPage</button> */}
+      {/* Logs messagesPage */} 
+      <button onClick={() => console.log(messagesPage)} className="bg-amber-600 rounded-2xl cursor-pointer px-3 py-1 mx-2">Show messagesPage</button>
 
       {/* Increments messagesPage */}
-      {/* <button onClick={() => setMessagesPage((prev) => {
+      <button onClick={() => setMessagesPage((prev) => {
         console.log("Incremented");
         return prev + 1;
-      })} className="bg-amber-300 rounded-2xl cursor-pointer px-3 py-1 mx-2">Increment messagesPage</button> */}
+      })} className="bg-amber-300 rounded-2xl cursor-pointer px-3 py-1 mx-2">Increment messagesPage</button>
 
       {/* Fetch paginated messages*/}
-      {/* <button onClick={fetchPaginatedMessages} className="bg-[#3caa26] rounded-2xl cursor-pointer px-3 py-1 mx-2 my-2">Fetch messages</button> */}
+      <button onClick={fetchPaginatedMessages} className="bg-[#3caa26] rounded-2xl cursor-pointer px-3 py-1 mx-2 my-2">Fetch messages</button>
 
       {isMobile && <TopBar />}
       {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
-      <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
+        <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
 
-        <div className="relative py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
+        <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
           {selectedUser.name} ({selectedUser.username})
-
-          {/* Load more button */}
-          {showLoadMoreButton && <button onClick={loadMoreMessages} className="absolute top-13 left-1/2 -translate-x-1/2 bg-[#7d72c3] rounded-2xl cursor-pointer px-3 py-1 text-white z-10">Load More</button>}
         </div>
 
-        {/* Messages Container */}
         <div
           ref={messagesContainerRef}
-          className="flex-1 pt-13 border-x border-black-300 overflow-y-auto p-4 bg-white dark:bg-[#121212]"
+          className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white dark:bg-[#121212]"
           onClick={() => setShowPicker(false)}
         >
           {messages.map((msg) => (
@@ -366,7 +301,7 @@ function ChatBox() {
           )}
 
           {/* <div className={`${newMessageColor} h-10 w-10`}></div> */}
-
+          
           <svg
             onClick={() => setShowPicker((val) => !val)}
             xmlns="http://www.w3.org/2000/svg"
