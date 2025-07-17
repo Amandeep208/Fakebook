@@ -12,6 +12,7 @@ function ChatBox() {
   const isMobile = useIsMobile();
   const { selectedUser } = useChat();
   const [messages, setMessages] = useState([]);
+  const [currentMessages, setCurrentMessages] = useState([]);
   const [editingID, seteditingID] = useState(null);
   const [updatedmsg, setUpdatedmsg] = useState("");
   const [deletemsg, setDeletemsg] = useState(null);
@@ -161,8 +162,14 @@ function ChatBox() {
       body: JSON.stringify({ receiver: selectedUser.username, content: input }),
     });
     const result = await res.json();
+    // if (result.success) {
+    //   setMessages((prev) => [...prev, result.message]);
+    //   setInput("");
+    //   goToBottom();
+    // }
+
     if (result.success) {
-      setMessages((prev) => [...prev, result.message]);
+      setCurrentMessages((prev) => prev.concat(result.message));
       setInput("");
       goToBottom();
     }
@@ -184,8 +191,13 @@ function ChatBox() {
       credentials: "include",
     });
     const result = await res.json();
+    // if (result.success) {
+    //   setMessages(messages.filter((msg) => msg._id !== deletemsg_id));
+    //   setDeletemsg(null);
+    // }
+
     if (result.success) {
-      setMessages(messages.filter((msg) => msg._id !== deletemsg_id));
+      setCurrentMessages(messages.filter((msg) => msg._id !== deletemsg_id));
       setDeletemsg(null);
     }
   };
@@ -247,10 +259,10 @@ function ChatBox() {
   const loadMoreMessages = async () => {
     if (!selectedUser) return;
 
-    const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage}`, {
+    const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage}&currentMessagesCount=${currentMessages.length}`, {
       credentials: "include"
     });
-    const res2 = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage + 1}`, {
+    const res2 = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage + 1}&currentMessagesCount=${currentMessages.length}`, {
       credentials: "include"
     });
     const data = await res.json();
@@ -276,7 +288,7 @@ function ChatBox() {
       setMessagesPage((prev) => prev + 1);
 
       if (messagesContainerRef.current) {
-        messagesContainerRef.current.scrollTop = 20;
+        messagesContainerRef.current.scrollTop = 0.5;
       }
     }
   };
@@ -356,6 +368,52 @@ function ChatBox() {
               </div>
             </div>
           ))}
+
+          {/* Currrent Messages */}
+          {currentMessages.map((msg) => (
+            <div
+              key={msg._id}
+              className={`group flex-1 items-center mb-2 flex ${msg.sender === selectedUser.username ? "justify-start" : "justify-end"
+                }`}
+            >
+              {msg.sender !== selectedUser.username && (
+                <div className="group ml-2 border-2 h-7 w-7 rounded-full bg-[#e5e7eb] dark:bg-gray-600 opacity-0 translate-x-4 hover:border-[#4f4f51] hover:cursor-pointer group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-in-out flex items-center">
+                  <button onClick={() => handleDeleteClick(msg._id)} className="m-auto">
+                    {/* <img src={delete_img} alt="delete" className="w-4" /> */}
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" className="fill-[#7e22ce] dark:fill-white hover:cursor-pointer" ><path d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z" /></svg>
+                  </button>
+                </div>
+              )}
+
+              {msg.sender !== selectedUser.username && (
+                <div className="ml-2 opacity-0 border-2 rounded-full bg-[#e5e7eb] dark:bg-gray-600 h-7 w-7 mr-2 translate-x-4 hover:border-[#4f4f51] hover:cursor-pointer group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-in-out flex items-center">
+                  <button className="m-auto" onClick={() => handleEditClick(msg._id, msg.content)}>
+                    {/* <img src={edit} alt="edit" className="w-4" /> */}
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" className="fill-[#7e22ce] dark:fill-white hover:cursor-pointer"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" /></svg>
+                  </button>
+                </div>
+              )}
+
+              <div
+                className={`group relative px-4 py-2 rounded-lg min-w-[10rem] max-w-[70%] ${msg.sender === selectedUser.username
+                  ? "bg-gray-200 dark:bg-gray-700 text-left dark:text-white"
+                  : "bg-purple-200 dark:bg-purple-800 text-left dark:text-white"
+                  }`}
+              >
+                <div className="cursor-default">{msg.content}</div>
+                <div className="flex justify-end gap-1">
+                  {msg.__v > 0 && (
+                    <div className="text-xs text-left opacity-50 cursor-default">Edited</div>
+                  )}
+                  <div className="text-xs text-right mt-auto cursor-default">
+                    {new Date(msg.createdAt).getHours().toString().padStart(2, "0")}:
+                    {new Date(msg.createdAt).getMinutes().toString().padStart(2, "0")}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
           <div ref={scrollRef}></div>
         </div>
 
@@ -404,7 +462,7 @@ function ChatBox() {
           />
           <button
             onClick={sendMessage}
-            className="ml-3 bg-[#9085c6] text-white py-3 px-6 rounded-full hover:bg-[#7d72c3] transition"
+            className="ml-3 bg-[#9085c6] text-white py-3 px-6 rounded-full hover:bg-[#7d72c3] transition curo cursor-pointer"
           >
             ➤
           </button>

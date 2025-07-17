@@ -27,10 +27,11 @@ exports.messageFetch = async (req, res) => {
   const to = req.params.to;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
+  const currentMessagesCount = parseInt(req.query.currentMessagesCount) || 0;
  
   const room = await makeRoomID(to, from)
  
-  const messages = await Message.find({ roomID: room }).sort({ createdAt: -1 })
+  const messages = await Message.find({ roomID: room }).sort({ createdAt: -1 }).skip(currentMessagesCount)
   .skip((page - 1) * limit). limit(limit)
  
   res.json(messages.reverse())
