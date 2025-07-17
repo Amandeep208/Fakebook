@@ -24,7 +24,6 @@ function ChatBox() {
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
   const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
-  const [messagesPage, setMessagesPage] = useState(1);
 
   // useEffect(() => {
   //   if (newMessagesCounter == 1) {
@@ -193,33 +192,8 @@ function ChatBox() {
 
   // const height = isMobile ? "70vh" : "90vh";
 
-  const fetchPaginatedMessages = async () => {
-    if (!selectedUser) return;
-    
-    const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${messagesPage}`, {
-      credentials: "include"
-    });
-    const data = await res.json();
-    console.log("Raw Data", data, data.length);
-    if (JSON.stringify(data) !== JSON.stringify(messages)) {
-      setMessages(data);
-    }
-  };
-
   return (
     <>
-      {/* Logs messagesPage */} 
-      <button onClick={() => console.log(messagesPage)} className="bg-amber-600 rounded-2xl cursor-pointer px-3 py-1 mx-2">Show messagesPage</button>
-
-      {/* Increments messagesPage */}
-      <button onClick={() => setMessagesPage((prev) => {
-        console.log("Incremented");
-        return prev + 1;
-      })} className="bg-amber-300 rounded-2xl cursor-pointer px-3 py-1 mx-2">Increment messagesPage</button>
-
-      {/* Fetch paginated messages*/}
-      <button onClick={fetchPaginatedMessages} className="bg-[#3caa26] rounded-2xl cursor-pointer px-3 py-1 mx-2 my-2">Fetch messages</button>
-
       {isMobile && <TopBar />}
       {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
         <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
