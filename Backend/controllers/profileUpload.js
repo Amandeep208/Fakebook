@@ -1,5 +1,5 @@
 const { cloudinary } = require("../config");
-const { upload } = require("../middleware/authMiddleware");
+// const { upload } = require("../middleware/authMiddleware");
 const users = require("../model/user");
 
 
@@ -20,7 +20,7 @@ const updateLink = async(username, profileLink) => {
 
 
 exports.profileUpload = async (req, res) => {
-    cloudinary.uploader.upload(req.file.path, function (err, result) {
+    cloudinary.uploader.upload(req.file.path, async function (err, result) {
         if (err) {
             console.log(err);
             return res.status(500).json({
@@ -30,7 +30,7 @@ exports.profileUpload = async (req, res) => {
         }
         const username = req.session.user.username
 
-        updateLink(username, result.secure_url)
+        await updateLink(username, result.secure_url)
         
 
 
