@@ -24,6 +24,39 @@ function ChatBox() {
   const [newMessagesIndicator, setNewMessagesIndicator] = useState(false);
   const [newMessageColor, setNewMessageColor] = useState("bg-[#ff6c00]");
   const [newMessagesCounter, setNewMessagesCounter] = useState(0);
+  // Changes
+  const [oldestPageLoaded, setOldestPageLoaded] = useState(1);
+  const oldestPageLoadedRef = useRef(oldestPageLoaded);
+  const [trigger, setTrigger] = useState(false);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+  const messagesRef = useRef(messages.length);
+
+
+  useEffect(() => {
+    if (newMessagesCounter <= 0) {
+      setNewMessagesIndicator(false);
+    }
+    else {
+      setNewMessagesIndicator(true);
+    }
+  }, [newMessagesCounter]);
+
+  // Keep messagesRef in sync with messages.
+  useEffect(() => {
+    messagesRef.current = messages.length;
+  }, [messages]);
+
+  // Disable the Load more button if first messages are less than 20
+  useEffect(() => {
+    if (messagesRef.current < 20) {
+      setShowLoadMore(false);
+    }
+  }, [messages]);
+
+  // Keeps OPLRef in sync with OPL
+  useEffect(() => {
+    oldestPageLoadedRef.current = oldestPageLoaded;
+  }, [oldestPageLoaded]);
 
   // useEffect(() => {
   //   if (newMessagesCounter == 1) {
@@ -40,7 +73,7 @@ function ChatBox() {
     }
     else {
       setNewMessageColor("bg-[#000000]");
-    } 
+    }
   }, [newMessagesIndicator]);
 
   const toggleStatus = () => {
@@ -55,6 +88,18 @@ function ChatBox() {
     if (isNearBottom) {
       setNewMessagesCounter(0);
       setNewMessagesIndicator(false);
+    }
+
+    if (messagesRef.current < 20) {
+      setShowLoadMore(false);
+    }
+    else {
+      if (container.scrollTop == 0) {
+        setShowLoadMore(true);
+      }
+      else {
+        setShowLoadMore(false);
+      }
     }
   };
 
@@ -81,6 +126,8 @@ function ChatBox() {
     setAtBottom(true);
     setNewMessagesIndicator(false);
     setNewMessagesCounter(0);
+    setOldestPageLoaded(1);
+    setShowLoadMore(false);
   }, [selectedUser]);
 
   const onEmojiClick = (emojiData) => {
@@ -91,10 +138,11 @@ function ChatBox() {
     setEmojiButtonColor(showPicker ? "bg-gray-200 dark:bg-gray-700" : "bg-white dark:bg-[#1e1e1e]");
   }, [showPicker]);
 
+
+  // Fetching first 20 messages automatically
   useEffect(() => {
-    if (!selectedUser) return;
     async function fetchMessages() {
-      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}`, {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=1`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -102,10 +150,50 @@ function ChatBox() {
         setMessages(data);
       }
     }
+    if (!selectedUser) return;
     fetchMessages();
-    const interval = setInterval(fetchMessages, 2000);
+  }, [selectedUser]);
+
+
+  // Subsequent 2 Sec automatic request for messages
+  useEffect(() => {
+    async function fetchMessages(page) {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${page}`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      // console.log(data);
+      return data;
+    }
+
+    async function fetchMessagesUptoPage(uptoPage) {
+      let compiledData = [];
+      for (let i = uptoPage; i > 0; i--) {
+        const dataSegment = await fetchMessages(i);
+        compiledData = compiledData.concat(dataSegment);
+      }
+      return compiledData;
+    }
+
+    async function fetchMessagesUpto() {
+      const finalData = await fetchMessagesUptoPage(oldestPageLoadedRef.current);
+      if (JSON.stringify(finalData) != JSON.stringify(messages)) {
+        console.log("\nNew messages are different");
+        setMessages(finalData);
+      }
+      else {
+        console.log("\nNew messages are same");
+      }
+    }
+
+    if (!selectedUser) return;
+
+    fetchMessagesUpto(oldestPageLoadedRef.current);
+    const interval = setInterval(fetchMessagesUpto, 2000);
     return () => clearInterval(interval);
+
   }, [selectedUser, messages]);
+
 
   useEffect(() => {
     if (atBottom) {
@@ -113,7 +201,7 @@ function ChatBox() {
     }
     else {
       setNewMessagesCounter((prev) => prev + 1);
-      setNewMessagesIndicator(true);
+      // setNewMessagesIndicator(true);
     }
   }, [messages]);
 
@@ -192,19 +280,43 @@ function ChatBox() {
 
   // const height = isMobile ? "70vh" : "90vh";
 
+  const handleLoadMore = () => {
+    console.log("Load more clicked");
+
+    async function fetchMessages() {
+      const res = await fetch(`${BACKEND_URL}/messages/${selectedUser.username}?page=${oldestPageLoaded + 1}`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setMessages((prev) => data.concat(prev));
+      setNewMessagesCounter((prev) => prev - 1);
+
+      if (data.length != 0) {
+        setOldestPageLoaded((prev) => prev + 1);
+        messagesContainerRef.current.scrollTop = 0.5;
+      }
+      else {
+        setShowLoadMore(false);
+      }
+    }
+    fetchMessages();
+  }
+
   return (
     <>
       {isMobile && <TopBar />}
       {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
-        <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
+      <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
 
-        <div className="py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
+        <div className="relative py-2 px-4 border border-gray-300 rounded-t-xl bg-purple-100 text-center font-semibold dark:bg-[#2d1a40] dark:text-white dark:border-gray-600">
           {selectedUser.name} ({selectedUser.username})
+
+          {showLoadMore && <button onClick={handleLoadMore} className="left-1/2 -translate-x-1/2 top-13 text-sm absolute z-10 bg-[#7d72c3] px-2 py-1 rounded-2xl cursor-pointer text-white">Load More</button>}
         </div>
 
         <div
           ref={messagesContainerRef}
-          className="flex-1 border-x border-black-300 overflow-y-auto p-4 bg-white dark:bg-[#121212]"
+          className="flex-1 border-x border-black-300 overflow-y-auto pt-13 p-4 bg-white dark:bg-[#121212]"
           onClick={() => setShowPicker(false)}
         >
           {messages.map((msg) => (
@@ -267,7 +379,7 @@ function ChatBox() {
           )}
 
           {/* <div className={`${newMessageColor} h-10 w-10`}></div> */}
-          
+
           <svg
             onClick={() => setShowPicker((val) => !val)}
             xmlns="http://www.w3.org/2000/svg"
