@@ -24,6 +24,10 @@ let userSchema = mongoose.Schema(
         profileLink: {
             type: String,
             default: null
+        },
+        lastSeen: {
+            type: Date,
+            default: null
         }
     },
     {

@@ -4,6 +4,6 @@ const { users } = require('../controllers/userController');
 
 const router = express.Router(); 
 
-router.get('/fetchusers', isAuthenticated,users); 
+router.get('/fetchusers', isAuthenticated, users); 
 
 module.exports = router;
