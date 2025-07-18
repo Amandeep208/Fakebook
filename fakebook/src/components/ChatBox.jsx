@@ -304,12 +304,6 @@ function ChatBox() {
 
   return (
     <>
-      <button onClick={() => console.log(messagesRef.current)} className="bg-amber-700 text-white rounded mx-2 p-2 rounded-2xl cursor-pointer">Trigger</button>
-      <button onClick={() => setOldestPageLoaded((prev) => prev + 1)} className="bg-amber-200 rounded mx-2 p-2 rounded-2xl cursor-pointer">Increment OSL</button>
-      <button onClick={() => console.log(oldestPageLoaded)} className="bg-amber-200 rounded mx-2 p-2 rounded-2xl cursor-pointer">Print OSL</button>
-
-
-
       {isMobile && <TopBar />}
       {/* <div className={`h-[${height}] flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439]`}> */}
       <div className={`flex flex-col px-6 mb-5 pt-2 dark:bg-[#161439] ${isMobile ? "h-[70vh]" : "h-[90vh]"}`}>
