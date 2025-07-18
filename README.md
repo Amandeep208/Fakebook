@@ -22,6 +22,9 @@ DB_LINK2=<Secondary MongoDB link. Same as primary if NA (mongodb........mongodb.
 SECRET_KEY=<Session signing key (yourSecretKey12345)>
 FRONTEND_IP_ADDRESS=<IPv4 address of the frontend (192.168.1.100)>
 FRONTEND_PORT=<4-digit port of the frontend (5713)>
+CLOUD_NAME=<Cloudinary Name>
+API_KEY=<Cloudinary API Key>
+API_SECRET=<Cloudinary API Secret>
 ```
 
 2. Create a `.env` file inside `./fakebook` and add the following lines:
