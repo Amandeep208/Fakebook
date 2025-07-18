@@ -37,10 +37,12 @@ app.use(session({
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messageRoutes")
+const upload = require("./routes/profileUploadRoute")
 
 app.use("/auth", authRoutes); 
 app.use("/users", userRoutes)
 app.use("/messages", messageRoutes)
+app.use("/upload",upload)
 
 
 app.listen(8081, '0.0.0.0')
