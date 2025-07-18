@@ -19,29 +19,29 @@ function Profile() {
   const { loggedInUser } = useChat();
 
   //getting profile link
-useEffect(()=>{
-  const getlink = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/upload/profileData`, {
-        method: "GET",
-        credentials: "include", // sends cookies like connect.sid
-        redirect: "follow"
-      });
+  useEffect(() => {
+    const getlink = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/upload/profileData`, {
+          method: "GET",
+          credentials: "include", // sends cookies like connect.sid
+          redirect: "follow"
+        });
 
-      const data = await response.json(); // assuming backend returns JSON
-      // console.log("Profile link data:", data);
+        const data = await response.json(); // assuming backend returns JSON
+        // console.log("Profile link data:", data);
 
-      setProfileLink(data.result)
-      console.log(profileLink)
+        setProfileLink(data.result)
+        console.log(profileLink)
 
-    } catch {
-      console.error("Failed to fetch profile link:");
-      return null
-    }
-  };
+      } catch {
+        console.error("Failed to fetch profile link:");
+        return null
+      }
+    };
 
-  getlink();
-})
+    getlink();
+  })
 
 
 
@@ -138,17 +138,17 @@ useEffect(()=>{
 
           <div className="relative group w-32 h-32 mx-auto mb-4 rounded-full bg-[#ad46ff] text-white flex items-center justify-center text-5xl font-bold">
             {
-            
+
               profileLink ? (
                 <img className="rounded-full w-full h-full" src={profileLink} alt="ProfilePic" />
-            ) : (
-              <div className="bg-purple-500 text-white rounded-full w-12 h-12 flex items-center justify-center">
-                {(loggedInUser?.name || "?")
-                  .split(' ')
-                  .map(word => word[0])
-                  .join('').toUpperCase()}
-              </div>
-            )}
+              ) : (
+                <div className="bg-purple-500 text-white rounded-full w-12 h-12 flex items-center justify-center">
+                  {(loggedInUser?.name || "?")
+                    .split(' ')
+                    .map(word => word[0])
+                    .join('').toUpperCase()}
+                </div>
+              )}
 
 
             {/* Camera icon button */}
@@ -198,15 +198,19 @@ useEffect(()=>{
                 />
 
               </li>
-              <li>
-                <button
-                  onClick={removeProfile}
+              {
+                profileLink &&
 
-                  className="w-full text-left px-4 py-2 rounded hover:bg-red-100 dark:hover:bg-gray-700 dark:text-white"
-                >
-                  🗑️ Remove photo
-                </button>
-              </li>
+                <li>
+                  <button
+                    onClick={removeProfile}
+
+                    className="w-full text-left px-4 py-2 rounded hover:bg-red-100 dark:hover:bg-gray-700 dark:text-white"
+                  >
+                    🗑️ Remove photo
+                  </button>
+                </li>
+              }
             </ul>
             <button
               onClick={() => setProfilePopup(false)}
