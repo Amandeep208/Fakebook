@@ -20,12 +20,19 @@ let userSchema = mongoose.Schema(
         password: {
             type: String,
             required: true,
+        },
+        profileLink: {
+            type: String,
+            default: null
         }
     },
     {
         versionKey: false,
     }
 );
+
+userSchema.index({username:1})
+
  
  
 let users = mongoose.model('fakebookUsers', userSchema);

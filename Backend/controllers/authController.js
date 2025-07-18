@@ -38,8 +38,10 @@ exports.login = async (req, res) => {
       return res.json({ success: false, message: "Invalid password" });
 
     req.session.user = {
+      id: user._id,
       username: user.username,
-      name: user.name
+      name: user.name,
+      profileLink: user.profileLink
     };
     return res.json({ success: true, message: "Login successful", data: req.session.user });
   } catch (err) {
