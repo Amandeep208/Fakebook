@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext.jsx';
 
 
 const LoginForm = () => {
-  const { setLoggedInUser } = useChat(); 
+  const { setLoggedInUser } = useChat();
   const navigate = useNavigate(); // Must be called here, inside the component
 
   const [formData, setFormData] = useState({
@@ -45,6 +45,11 @@ const LoginForm = () => {
       <input
         onChange={(e) => setFormData({ ...formData, username: e.target.value })}
         type="text"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSubmit(); // Replace this with your function
+          }
+        }}
         placeholder="Enter the Username"
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
       />
@@ -53,6 +58,12 @@ const LoginForm = () => {
       <input
         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         type="password"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSubmit(); // Replace this with your function
+          }
+        }}
+
         placeholder="Enter the Password"
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
       />

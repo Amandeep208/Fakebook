@@ -55,6 +55,11 @@ const SignupForm = () => {
         type="text"
         placeholder="Enter Your Name"
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handelSubmit(); // Replace this with your function
+          }
+        }}
         onChange={(e)=>{
           setFormData({...formData, name: e.target.value})
         }}
@@ -65,6 +70,11 @@ const SignupForm = () => {
         type="text"
         placeholder="Enter the Username"
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handelSubmit(); // Replace this with your function
+          }
+        }}
         onChange={(e)=>{
           setFormData({...formData, username: e.target.value})
         }}
@@ -74,6 +84,11 @@ const SignupForm = () => {
       <input
         type="password"
         placeholder="Enter the Password"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handelSubmit(); // Replace this with your function
+          }
+        }}
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
         onChange={(e)=>{
           setFormData({...formData, password: e.target.value})
@@ -84,6 +99,11 @@ const SignupForm = () => {
       <input
         type="password"
         placeholder="Confirm Password"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handelSubmit(); // Replace this with your function
+          }
+        }}
         className="w-full p-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-300"
         onChange={(e)=>{
           setFormData({...formData, signupConfirmPassword: e.target.value})

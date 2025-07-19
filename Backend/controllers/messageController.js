@@ -23,6 +23,11 @@ exports.countFetch = async (req,res)=> {
  
  
 exports.messageFetch = async (req, res) => {
+  await User.findOneAndUpdate(
+    {username: req.session.user.username},
+    {$set: {lastSeen: new Date()}}
+    // {$set: {lastSeen: JSON.stringify(Date.now()) }}
+  )
   const from = req.session.user.username;
   const to = req.params.to;
   const page = parseInt(req.query.page) || 1;

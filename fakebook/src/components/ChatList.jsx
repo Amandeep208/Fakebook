@@ -19,6 +19,7 @@ function ChatList() {
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [status, setStatus] = useState("")
 
   // ✅ Fetch logged-in user
   useEffect(() => {
@@ -43,16 +44,33 @@ function ChatList() {
   }, []);
 
   // ✅ Fetch all users
+  // useEffect(() => {
+  //   async function fetchUsers() {
+  //     const res = await fetch(`${BACKEND_URL}/users/fetchusers`, {
+  //       credentials: "include",
+  //     });
+  //     const data = await res.json();
+  //     if (data.success) setUsers(data.users);
+  //   }
+
+  //   fetchUsers();
+  // }, []);
   useEffect(() => {
+
     async function fetchUsers() {
       const res = await fetch(`${BACKEND_URL}/users/fetchusers`, {
         credentials: "include",
       });
       const data = await res.json();
-      if (data.success) setUsers(data.users);
+      if (data.success) {
+        setUsers(data.users);
+        console.log(data)
+      }
     }
-
     fetchUsers();
+
+    const fetchUsersInterval = setInterval(fetchUsers, 5000);
+    return () => clearInterval(fetchUsersInterval);
   }, []);
 
   // ✅ Set initial theme on mount
@@ -89,6 +107,32 @@ function ChatList() {
       navigate("/chat");
     }
   };
+
+  //Status Update
+  // const statusUpdate = (lastSeen) => {
+
+  const statusUpdate = (lastSeen) => {
+    if (lastSeen == null) {
+      return "";
+    }
+    const diffInSeconds = Math.floor((Date.now() - new Date(lastSeen)) / 1000);
+
+    if (diffInSeconds < 5) {
+      return "Online";
+    } else if (diffInSeconds < 60) {
+      return `Active few seconds ago`;
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `Active ${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `Active ${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `Active ${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+  };
+
 
 
 
@@ -155,7 +199,7 @@ function ChatList() {
                 : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
                 }`}
             >
-              <div className="w-10 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
+              <div className="w-12 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
                 {user.profileLink ? (
                   <img
                     src={user.profileLink}
@@ -167,10 +211,28 @@ function ChatList() {
                 )}
               </div>
 
-              <div>
-                <p className="text-md">{user.name}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">@{user.username}</p>
+              <div className="w-full">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-md font-medium text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">@{user.username}</p>
+                  </div>
+
+                  <div>
+                    {statusUpdate(user.lastSeen) === "Online" ? (
+                      <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                        <span className="h-2 w-2 rounded-full bg-green-500 dark:bg-green-400 animate-pulse"></span>
+                        <span>{statusUpdate(user.lastSeen)}</span>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {statusUpdate(user.lastSeen)}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
+
             </div>
           ))}
         </div>
