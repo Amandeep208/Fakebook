@@ -1,62 +1,47 @@
 import { useChat } from "../context/ChatContext";
 import { data, useNavigate } from "react-router-dom";
-
 import useIsMobile from '../hooks/uselsMobile';
 import TopBar from "./TopBar";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
-// import { get } from "mongoose";
-
-
 
 function Profile() {
-
   const [profilePopup, setProfilePopup] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
-
   const [profileLink, setProfileLink] = useState(null);
   const { loggedInUser } = useChat();
 
-  //getting profile link
+  // Getting profile picture link
   useEffect(() => {
     const getlink = async () => {
       try {
         const response = await fetch(`${BACKEND_URL}/upload/profileData`, {
           method: "GET",
-          credentials: "include", // sends cookies like connect.sid
+          credentials: "include", // To sends cookies like connect.sid
           redirect: "follow"
         });
 
-        const data = await response.json(); // assuming backend returns JSON
-        // console.log("Profile link data:", data);
-
+        const data = await response.json();
         setProfileLink(data.result)
-        console.log(profileLink)
-
-      } catch {
+      }
+      catch {
         console.error("Failed to fetch profile link:");
         return null
       }
     };
 
     getlink();
-  })
+  });
 
-
-
-
-
-
-
-  //upload profile 
+  // Upload profile picture
   const handleProfileImageUpload = async (event) => {
     const file = event.target.files[0]; // Only one file allowed
     if (!file) return;
 
     try {
       const formData = new FormData();
-      formData.append("image", file); // Use the actual File object
+      formData.append("image", file); // Actual File object
       setProfilePopup(false)
       setLoading(true)
 
@@ -70,16 +55,14 @@ function Profile() {
         throw new Error(`Upload failed with status ${response.status}`);
       }
 
-      setLoading(false)
+      setLoading(false);
       const result = await response.text();
       console.log("Upload success:");
-      // Optionally refresh profile picture here
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Upload failed:");
     }
   };
-
-
 
   if (!loggedInUser) {
     return (
@@ -91,13 +74,13 @@ function Profile() {
       </>
     );
   }
-  // console.log(loggedInUser.profileLink)
 
+  // Removes profile picture
   const removeProfile = async () => {
     try {
-      const response = await fetch("http://192.168.1.64:8081/upload/profileRemove", {
+      const response = await fetch(`${BACKEND_URL}/upload/profileRemove`, {
         method: "POST",
-        credentials: "include", // ⬅️ Automatically sends cookies like connect.sid
+        credentials: "include", // Sends cookies like connect.sid automatically
       });
 
       if (!response.ok) {
@@ -115,8 +98,6 @@ function Profile() {
 
   };
 
-
-
   return (
     <>
       <div className="min-h-screen dark:bg-[#161439] transition-colors duration-300">
@@ -133,12 +114,10 @@ function Profile() {
         </div>
 
         <div className="max-w-md mx-auto mt-4 p-6 bg-white dark:bg-gray-800 rounded-xl text-center shadow-md transition-all duration-300">
-          {/* Profile DP */}
 
-
+          {/* Conditional Profile Picture or placeholder Initials */}
           <div className="relative group w-32 h-32 mx-auto mb-4 rounded-full bg-[#ad46ff] text-white flex items-center justify-center text-5xl font-bold">
             {
-
               profileLink ? (
                 <img className="rounded-full w-full h-full" src={profileLink} alt="ProfilePic" />
               ) : (
@@ -149,7 +128,6 @@ function Profile() {
                     .join('').toUpperCase()}
                 </div>
               )}
-
 
             {/* Camera icon button */}
             <button
@@ -162,9 +140,6 @@ function Profile() {
             </button>
           </div>
 
-
-
-
           {/* Profile Details */}
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {loggedInUser.name}
@@ -173,15 +148,15 @@ function Profile() {
         </div>
       </div>
 
-
+      {/* Pop-up to upload or delete photo */}
       {profilePopup &&
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-80 p-6">
             <h2 className="text-lg font-semibold mb-4 text-center dark:text-white">Profile Options</h2>
             <ul className="space-y-2">
+
+              {/* Upload profile photo button */}
               <li>
-
-
                 <label
                   htmlFor="profile-upload"
                   className="w-full text-left px-4 py-2 rounded hover:bg-purple-100 dark:hover:bg-gray-700 dark:text-white cursor-pointer block"
@@ -196,11 +171,10 @@ function Profile() {
                   className="hidden"
                   onChange={handleProfileImageUpload}
                 />
-
               </li>
-              {
-                profileLink &&
 
+              {/* Delete profile photo button */}
+              {profileLink &&
                 <li>
                   <button
                     onClick={removeProfile}
@@ -212,6 +186,8 @@ function Profile() {
                 </li>
               }
             </ul>
+
+            {/* Cancel pop-up button */}
             <button
               onClick={() => setProfilePopup(false)}
               className="mt-4 w-full text-sm text-gray-500 hover:text-gray-800 dark:hover:text-gray-300"

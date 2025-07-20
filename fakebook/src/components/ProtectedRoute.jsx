@@ -6,6 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Checks whether the user is logged in
   useEffect(() => {
     async function checkSession() {
       try {
@@ -28,6 +29,7 @@ const ProtectedRoute = ({ children }) => {
 
   return (
     <>
+      {/* Displays loading overlay over child if session is being checked */}
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full bg-white/60 flex justify-center items-center z-50">
           <div className="text-center">

@@ -6,8 +6,11 @@ import { BACKEND_URL } from "../config.js";
 import TopBar from "./TopBar.jsx";
 import ProfileImg from "../assets/Profile.svg";
 
+// Component to display list of users
 function ChatList() {
   const [users, setUsers] = useState([]);
+
+  // Context
   const {
     setSelectedUser,
     selectedUser,
@@ -19,9 +22,8 @@ function ChatList() {
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [status, setStatus] = useState("")
 
-  // ✅ Fetch logged-in user
+  // Fetch logged-in user
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -43,20 +45,8 @@ function ChatList() {
     fetchUser();
   }, []);
 
-  // ✅ Fetch all users
-  // useEffect(() => {
-  //   async function fetchUsers() {
-  //     const res = await fetch(`${BACKEND_URL}/users/fetchusers`, {
-  //       credentials: "include",
-  //     });
-  //     const data = await res.json();
-  //     if (data.success) setUsers(data.users);
-  //   }
-
-  //   fetchUsers();
-  // }, []);
+  // Fetch all users the logged in user
   useEffect(() => {
-
     async function fetchUsers() {
       const res = await fetch(`${BACKEND_URL}/users/fetchusers`, {
         credentials: "include",
@@ -69,11 +59,13 @@ function ChatList() {
     }
     fetchUsers();
 
+    // Get user details every 5 seconds to check for online status
     const fetchUsersInterval = setInterval(fetchUsers, 5000);
+
     return () => clearInterval(fetchUsersInterval);
   }, []);
 
-  // ✅ Set initial theme on mount
+  // Set initial theme on mount
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -87,7 +79,7 @@ function ChatList() {
     }
   }, []);
 
-  // ✅ Toggle theme
+  // Toggle theme
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
@@ -100,7 +92,7 @@ function ChatList() {
     }
   };
 
-  // ✅ Handle user select
+  // Navigate to chat when user is selected on mobile
   const handleSelect = (user) => {
     setSelectedUser(user);
     if (isMobile) {
@@ -108,9 +100,7 @@ function ChatList() {
     }
   };
 
-  //Status Update
-  // const statusUpdate = (lastSeen) => {
-
+  // Last Seen status formatter
   const statusUpdate = (lastSeen) => {
     if (lastSeen == null) {
       return "";
@@ -133,9 +123,6 @@ function ChatList() {
     }
   };
 
-
-
-
   return (
     <>
       <div className="dark:bg=[#161439]">
@@ -143,12 +130,15 @@ function ChatList() {
         <TopBar />
 
         <div className="px-4 py-2 mt-5 text-xl text-black dark:text-white font-bold transition-colors duration-300">
+
+          {/* Logged in user info*/}
           {loggedInUser ? (
             <div className="flex items-center">
-              {/* {!isMobile && ()}+++ */}
+
               <Link to="/profile">
                 <div className="flex items-center h-[40px] cursor-pointer hover:opacity-90">
-                  {/* Profile Icon */}
+
+                  {/* Profile on desktop */}
                   {!isMobile && (
 
                     <div className="flex items-center justify-center h-full w-[40px]">
@@ -172,11 +162,7 @@ function ChatList() {
                 </div>
               </Link>
 
-
-              {/* <div className="ml-2 h-[40px] text-2xl">
-              {!isMobile ? loggedInUser.name : `Welcome, ${loggedInUser.name}`}
-            </div> */}
-
+              {/* Theme toggle button */}
               <button
                 onClick={toggleTheme}
                 className="ml-auto mr-5 p-2 px-4 transition duration-300 hover:cursor-pointer text-black dark:text-white"
@@ -189,8 +175,11 @@ function ChatList() {
           )}
         </div>
 
+        {/* Users container */}
         <div className="h-[70vh] w-full pt-3 pb-10 overflow-y-auto">
           {users.map((user) => (
+
+            // Each user's container
             <div
               key={user.username}
               onClick={() => handleSelect(user)}
@@ -199,6 +188,8 @@ function ChatList() {
                 : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white"
                 }`}
             >
+
+              {/* Conditionally display profile picture or placeholder initials */}
               <div className="w-12 h-10 rounded-full bg-[#9085c6] text-white flex items-center justify-center font-bold">
                 {user.profileLink ? (
                   <img
@@ -211,6 +202,7 @@ function ChatList() {
                 )}
               </div>
 
+              {/* Other user infodetails */}
               <div className="w-full">
                 <div className="flex justify-between items-center">
                   <div>
@@ -218,6 +210,7 @@ function ChatList() {
                     <p className="text-sm text-gray-600 dark:text-gray-400">@{user.username}</p>
                   </div>
 
+                  {/* Last seen status */}
                   <div>
                     {statusUpdate(user.lastSeen) === "Online" ? (
                       <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">

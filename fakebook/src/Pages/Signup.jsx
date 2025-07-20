@@ -1,11 +1,12 @@
 import BackgroundLayout from "../components/BackgroundLayout";
 import SignupForm from "../components/SignupForm ";
 
-export default function Signup(){
-    return(
+// Sign up form component
+export default function Signup() {
+    return (
         <>
             <BackgroundLayout>
-            <SignupForm />
+                <SignupForm />
             </BackgroundLayout>
         </>
     )

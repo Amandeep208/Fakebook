@@ -7,7 +7,6 @@ import HomeComplete from './components/HomeComplete';
 import ChatList from './components/ChatList';
 import ChatBox from './components/ChatBox';
 import Profile from './components/Profile';
-// import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import useIsMobile from './hooks/uselsMobile';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,8 +22,7 @@ const AppContent = () => {
 
   return (
     <>
-      {/* {!shouldHideTopBar && <TopBar />} */}
-
+      {/* Common routes for small screen and large screen */}
       <Routes>
         <Route path="/login" element={
           <PublicRoute>
@@ -37,6 +35,7 @@ const AppContent = () => {
           </PublicRoute>
         } />
 
+        {/* Conditionally renders the routes to display different layout for different components */}
         {isMobile ? (
           <>
             <Route path="/" element={
@@ -64,7 +63,7 @@ const AppContent = () => {
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
-                < HomeProfile/>
+                < HomeProfile />
               </ProtectedRoute>
             } />
             <Route path="/chat" element={
@@ -75,13 +74,16 @@ const AppContent = () => {
           </>
         )}
       </Routes>
-
+      
+      {/* Show bottom bar only on mobile */}
       {!shouldHideTopBar && isMobile && <BottomBar />}
     </>
   );
 };
 
 function App() {
+
+  // Return the above AppContent component wrapped in Browser router
   return (
     <BrowserRouter>
       <AppContent />

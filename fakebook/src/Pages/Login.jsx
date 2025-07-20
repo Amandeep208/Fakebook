@@ -1,11 +1,13 @@
 import BackgroundLayout from "../components/BackgroundLayout";
 import LoginForm from "../components/LoginForm";
 
-export default function Login(){
-    return(
+// Log in form component
+export default function Login() {
+
+    return (
         <>
             <BackgroundLayout>
-            <LoginForm />
+                <LoginForm />
             </BackgroundLayout>
         </>
     )
