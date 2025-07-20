@@ -10,6 +10,7 @@ import TopBar from '../components/TopBar.jsx';
 import Profile from '../components/Profile.jsx';
 import { BACKEND_URL } from "../config.js"
 
+// Testing function to check sessions
 export default function HomePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -24,13 +25,14 @@ export default function HomePage() {
       if (!data.loggedIn) {
         navigate("/login");
       } else {
-        setUser(data.user);  // ✅ Store user in state
+        setUser(data.user);
       }
     }
 
     checkSession();
   }, [navigate]);
 
+  // Testing log-out fucntion
   async function handleLogout() {
     const res = await fetch(`${BACKEND_URL}/auth/logout`, {
       method: "GET",

@@ -3,6 +3,7 @@ import ListImg from '../assets/1.svg'
 import ChatImg from '../assets/2.svg'
 import ProfileImg from '../assets/3.svg'
 
+// Bottom navigation bar for mobile layout
 function BottomBar() {
 
     return (
@@ -24,7 +25,7 @@ function BottomBar() {
             <Link to="/profile">
                 <div className="flex flex-col items-center cursor-pointer hover:opacity-90">
                     <img src={ProfileImg} alt="Profile Imgage"></img>
-                    {/* <span className="text-sm font-bold">Profile</span> */}
+                    {/* <span className="text-sm">Profile</span> */}
                 </div>
             </Link>
         </div>

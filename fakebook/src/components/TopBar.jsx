@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 import ProfileImg from '../assets/Profile.svg';
 import logo from "../assets/fakebook-logo.png";
 
+// Top bar component
 const TopBar = () => {
   const { loggedInUser } = useChat();
   const navigate = useNavigate();
 
+  // Log-out function
   const handleLogout = async () => {
     const res = await fetch(`${BACKEND_URL}/auth/logout`, {
       method: "GET",
@@ -24,11 +26,13 @@ const TopBar = () => {
   };
 
   return (
+    // Top bar container
     <div className="rounded-xl p-5 m-2 flex justify-between items-center bg-[#f3e8ff] dark:bg-purple-900 dark:border-[#9d8cf5] transition-colors duration-300">
       <div className="logo">
         <img className="w-40" src={logo} alt="Logo" />
       </div>
 
+      {/* Log-out button */}
       <button
         onClick={handleLogout}
         className="bg-purple-600 text-white px-5 py-2 rounded-3xl font-semibold hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 transition-colors duration-300"

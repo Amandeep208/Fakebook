@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config.js"
 
-
 const PublicRoute = ({ children }) => {
   const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
 
+  // Checks whether the user is logged in
   useEffect(() => {
     async function checkSession() {
       try {
@@ -15,9 +15,9 @@ const PublicRoute = ({ children }) => {
         });
         const data = await res.json();
         if (data.loggedIn) {
-          navigate("/"); // Redirect to dashboard/home
+          navigate("/"); // Redirect to dashboard/home if session is valid
         } else {
-          setChecking(false); // allow access to login/signup
+          setChecking(false); // Allow access to login/signup
         }
       } catch (err) {
         setChecking(false);
@@ -27,7 +27,7 @@ const PublicRoute = ({ children }) => {
     checkSession();
   }, [navigate]);
 
-  if (checking) return null; // Optional: loading spinner
+  if (checking) return null;
 
   return children;
 };
