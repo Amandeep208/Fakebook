@@ -1,49 +1,42 @@
-const multer = require('multer')
+const multer = require('multer');
 const path = require('path');
 
-
+// Middleware to check if the user is authenticated (i.e., logged in)
 exports.isAuthenticated = (req, res, next) => {
   if (req.session.user) {
+    // Proceed to the next middleware/route handler
     next();
   } else {
+    // If no user is found in session, redirect to login/home page
     res.redirect("/");
   }
 }
 
-
-// const storage = multer.memoryStorage();
-
-// const fileFilter = (req, file,cb)=> {
-//   const alloedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
-//   if(alloedTypes.includes(file.mimetype))
-//     cb(null,true);
-// }
-
-
-// const storage = multer.diskStorage({
-//   filename: function (req, file, cb) {
-//     const ext = path.extname(file.originalname); // e.g., .jpg, .png
-//     const username = req.session.user.username; // adjust this based on your auth/session setup
-//     cb(null, `${username}${ext}`);
-//   }
-// })
-
-
-
-
+// Multer storage configuration
 const storage = multer.diskStorage({
 
-
+  // Callback to define filename for uploaded file
   filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname); // e.g., .jpg, .png
-    const username = req.session.user.username; // adjust this based on your auth/session setup
-    console.log(`${username}${ext}`)
-    cb(null, `${username}${ext}`)
+    try {
+      // Extract file extension (e.g., .jpg, .png)
+      const ext = path.extname(file.originalname);
 
+      // Get the logged-in user's username from the session
+      const username = req.session?.user?.username;
+
+      if (!username) {
+        // If username is missing in session, return error via callback
+        return cb(new Error("Username not found in session"), false);
+      }
+
+      // Set the filename as: <username>.<extension>
+      cb(null, `${username}${ext}`);
+    } catch (err) {
+      // Catch any unexpected error and pass it to multer callback
+      cb(err, false);
+    }
   }
-}
+});
 
-
-)
-
-exports.upload = multer({ storage })
+// Export multer upload instance with configured storage
+exports.upload = multer({ storage });
